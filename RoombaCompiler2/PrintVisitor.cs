@@ -16,9 +16,38 @@ namespace RoombaCompiler2
             return base.VisitProgram(context);
         }
 
+        public override bool VisitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
+        {
+            Console.WriteLine("Conditional statement");
+            return base.VisitCond_stmt(context);
+        }
+        public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
+        {
+            Console.WriteLine("Statements");
+            return base.VisitStmts(context);
+        }
+
+        public override bool VisitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
+        {
+            Console.WriteLine("Function statement");
+            return base.VisitFunc_stmt(context);
+        }
+
+        public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
+        {
+            Console.WriteLine("Iterative statement");
+            return base.VisitIter_stmt(context);
+        }
+
+        public override bool VisitExpr([NotNull] GrammarParser.ExprContext context)
+        {
+            Console.WriteLine("Expression");
+            return base.VisitExpr(context);
+        }
+
         public override bool VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-            Console.WriteLine("Var Statement");
+            Console.WriteLine("Var Statement " + context.GetText());
 
             return base.VisitVar_stmt(context);
         }
@@ -32,9 +61,28 @@ namespace RoombaCompiler2
 
         public override bool VisitFunction_expr([NotNull] GrammarParser.Function_exprContext context)
         {
-            Console.WriteLine("Expression");
+            Console.WriteLine("Function Expression");
 
             return base.VisitFunction_expr(context);
+        }
+
+
+        public override bool VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
+        {
+            Console.WriteLine("Variable Declaration " + context.GetText());
+
+            return base.VisitVar_decl(context);
+        }
+
+        public override bool VisitVar_expr([NotNull] GrammarParser.Var_exprContext context)
+        {
+            Console.WriteLine(context.GetText());
+            return base.VisitVar_expr(context);
+        }
+        public override bool VisitPrint([NotNull] GrammarParser.PrintContext context)
+        {
+            Console.WriteLine("Print");
+            return base.VisitPrint(context);
         }
 
         public override bool VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)

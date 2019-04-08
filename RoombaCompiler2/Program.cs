@@ -13,7 +13,7 @@ namespace RoombaCompiler2
     {
         static void Main(string[] args)
         {
-            var charStream = CharStreams.fromstring("Program { int Horse=2 Test = 55 }");
+            var charStream = CharStreams.fromPath("firstProgram.txt");
 
             var lexer = new GrammarLexer(charStream);
 
@@ -24,6 +24,8 @@ namespace RoombaCompiler2
             parser.BuildParseTree = true;
 
             var tree = parser.program();
+
+            
 
             var visitor = new PrintVisitor();
 
