@@ -14,7 +14,8 @@ namespace RoombaCompiler2
         //Prefix can be used for indented to the correct premise, but needs way to check if out of for/while loop and indent back. Maybe an endloop grammar?
         //Cant figure it out.
         string prefix = "\r\n\t";
-        string path = @"pythonScript.py";
+        int scopeCount = 0;
+        string path = @"pythonScript.txt";
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
             Console.WriteLine("Program");
@@ -62,15 +63,16 @@ namespace RoombaCompiler2
             
             switch (context.GetChild(0).GetText())
             {
-                case "for":                                        
-
+                case "for":
+                    scopeCount = context.GetChild(7).ChildCount;
+                    prefix += "\t";
+                    Console.WriteLine("Scopecount = " + scopeCount);
                     //Get the inital and end value of i
                     int Start = Convert.ToInt32(context.GetChild(3).GetText());
-                    int End = Convert.ToInt32(context.GetChild(5).GetText());
-                    prefix += "\t";
+                    int End = Convert.ToInt32(context.GetChild(5).GetText());                    
                     using (StreamWriter sw = File.AppendText(path))
                     {
-                        sw.Write($"for i in range({End}):{prefix}");
+                        sw.Write($"for i in range({End}):");
                     }    
                         break;
                 case "while":
@@ -128,15 +130,25 @@ namespace RoombaCompiler2
                     int speed = Convert.ToInt32(context.GetChild(4).GetText()) * 10;
                     int pauseTime = Math.Abs(distance / (speed / 10));
 
+                    
+
                     using (StreamWriter sw = File.AppendText(path))
                     {
 
-                        sw.Write($"self.create.drive_direct({speed}, {speed}){prefix}" +
-                            $"self.time.sleep({pauseTime}){prefix}" +
-                            $"self.create.drive_direct(0,0){prefix}");
-                    }
+                        sw.Write($"{prefix}self.create.drive_direct({speed}, {speed})" +
+                            $"{prefix}self.time.sleep({pauseTime})" +
+                            $"{prefix}self.create.drive_direct(0,0)");
+                            scopeCount--;
+                            if (scopeCount == 0)
+                            {
+                                prefix = removePrefix(prefix, "\t");
 
-                    
+                            }
+                        sw.Write($"{prefix}");
+                    }                    
+                   
+                   
+
                     break;
                
                 default:
@@ -173,6 +185,17 @@ namespace RoombaCompiler2
 
             return base.VisitNum_expr(context);
         }
-        
+
+        private string removePrefix(string sourceString, string removeString)
+        {
+            int index = sourceString.IndexOf(removeString);
+            string cleanPath = (index < 0)
+                ? sourceString
+                : sourceString.Remove(index, removeString.Length);
+
+            return cleanPath;
+
+        }
+
     }
 }
