@@ -74,11 +74,11 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GrammarParser.function_expr"/>.
+	/// Visit a parse tree produced by <see cref="GrammarParser.func_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitFunction_expr([NotNull] GrammarParser.Function_exprContext context);
+	Result VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.iter_stmt"/>.
 	/// </summary>

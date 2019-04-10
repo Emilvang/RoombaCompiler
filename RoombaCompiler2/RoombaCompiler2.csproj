@@ -48,18 +48,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Combined1.g4.lexer.cs">
+      <DependentUpon>Combined1.g4</DependentUpon>
+    </Compile>
+    <Compile Include="Combined1.g4.parser.cs">
+      <DependentUpon>Combined1.g4</DependentUpon>
+    </Compile>
     <Compile Include="GrammarBaseListener.cs" />
     <Compile Include="GrammarBaseVisitor.cs" />
     <Compile Include="GrammarLexer.cs" />
     <Compile Include="GrammarListener.cs" />
     <Compile Include="GrammarParser.cs" />
     <Compile Include="GrammarVisitor.cs" />
+    <Compile Include="ScopeandTypes.cs" />
     <Compile Include="PrintVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Antlr4 Include="Grammar.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>RoombaCompiler2</CustomToolNamespace>
+    </Antlr4>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
