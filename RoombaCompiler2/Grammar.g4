@@ -10,7 +10,6 @@ grammar Grammar;
   stmt
    	: var_stmt
 	| var_decl
-   	| func_stmt
    	| iter_stmt
    	| cond_stmt
    	| func_expr
@@ -127,7 +126,7 @@ fragment CHARACTER: ('a' .. 'z' | 'A' .. 'Z');
 BOOL : 'True' | 'False';
 IDENTIFIER : CHARACTER+ (CHARACTER | DIGIT)*;
 INT : ('-')? DIGIT+;
-FLOAT : DIGIT+ ('.' DIGIT+)?;
+FLOAT : ('-')? DIGIT+ ('.' DIGIT+)?;
 COMMENT : '#' .*? '#' -> skip;
 WS
    	:  	(' ' | '\r' | '\t' | '\n' | COMMENT) -> channel(HIDDEN)
