@@ -101,15 +101,15 @@ public interface IGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GrammarParser.function_expr"/>.
+	/// Enter a parse tree produced by <see cref="GrammarParser.func_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterFunction_expr([NotNull] GrammarParser.Function_exprContext context);
+	void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GrammarParser.function_expr"/>.
+	/// Exit a parse tree produced by <see cref="GrammarParser.func_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitFunction_expr([NotNull] GrammarParser.Function_exprContext context);
+	void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.iter_stmt"/>.
 	/// </summary>
