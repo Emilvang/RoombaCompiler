@@ -19,9 +19,10 @@ namespace RoombaCompiler2
 
             var tokenStream = new CommonTokenStream(lexer);
 
-            var parser = new GrammarParser(tokenStream);
-
-            parser.BuildParseTree = true;
+            var parser = new GrammarParser(tokenStream)
+            {
+                BuildParseTree = true
+            };
 
             var tree = parser.program();
 

@@ -4,14 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
+using System.IO;
+
 
 namespace RoombaCompiler2
 {
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
+        //Prefix can be used for indented to the correct premise, but needs way to check if out of for/while loop and indent back. Maybe an endloop grammar?
+        //Cant figure it out.
+        string prefix = "\r\n\t";
+        int scopeCount = 0;
+        string path = @"pythonScript.txt";
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
             Console.WriteLine("Program");
+
+            if (new FileInfo(path).Length != 0)
+            {
+                File.WriteAllText(path, String.Empty);
+            }
+            using (StreamWriter sw = File.AppendText(path))
+            {              
+
+                sw.Write("class Run:\r\n\tdef __init__(self,factory):\r\n\t\"\"\"Constructor.\r\n" +
+                    "Args:\r\n\tfactory (factory.FactoryCreate)\r\n\t\"\"\"\r\nself.create = factory.create_create()\r\nself.time = factory.create_time_helper()\r\n" +
+                    "def run(self):\r\n\tself.create.start()\r\n\tself.create.safe()\r\n\t");
+            }
+
 
             return base.VisitProgram(context);
         }
@@ -23,19 +43,48 @@ namespace RoombaCompiler2
         }
         public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
         {
-            Console.WriteLine("Statements");
+            Console.WriteLine("Statements");         
+
+
             return base.VisitStmts(context);
         }
 
         public override bool VisitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
             Console.WriteLine("Function statement");
+                          
+
             return base.VisitFunc_stmt(context);
         }
 
         public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             Console.WriteLine("Iterative statement");
+            
+            switch (context.GetChild(0).GetText())
+            {
+                case "for":
+                    scopeCount = context.GetChild(7).ChildCount;
+                    prefix += "\t";
+                    Console.WriteLine("Scopecount = " + scopeCount);
+                    //Get the inital and end value of i
+                    int Start = Convert.ToInt32(context.GetChild(3).GetText());
+                    int End = Convert.ToInt32(context.GetChild(5).GetText());                    
+                    using (StreamWriter sw = File.AppendText(path))
+                    {
+                        sw.Write($"for i in range({End}):");
+                    }    
+                        break;
+                case "while":
+                    //To do
+                    break;
+                default:
+                    Console.WriteLine("Wrong!");
+                    break;
+
+            }
+                                    
+
             return base.VisitIter_stmt(context);
         }
 
@@ -47,7 +96,18 @@ namespace RoombaCompiler2
 
         public override bool VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-            Console.WriteLine("Var Statement " + context.GetText());
+            Console.WriteLine("Var Statement " + context.GetText());    
+            
+
+            //Write each child to pythonScript.txt. Each child can be translated if necessary.
+            //Should be added to the symbol table or something?
+            for (int i = 0; i < context.children.Count; i++)
+            {
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.Write(context.GetChild(i).GetText());
+                }
+            }
 
             return base.VisitVar_stmt(context);
         }
@@ -59,9 +119,45 @@ namespace RoombaCompiler2
             return base.VisitStmt(context);
         }
 
-        public override bool VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        public override bool VisitFunction_expr([NotNull] GrammarParser.Function_exprContext context)
         {
-            return base.VisitFunc_expr(context);
+            Console.WriteLine("Function Expression");
+
+            switch (context.GetChild(0).GetText())
+            {
+                case "Drive":                    
+                    int distance = Convert.ToInt32(context.GetChild(2).GetText());
+                    int speed = Convert.ToInt32(context.GetChild(4).GetText()) * 10;
+                    int pauseTime = Math.Abs(distance / (speed / 10));
+
+                    
+
+                    using (StreamWriter sw = File.AppendText(path))
+                    {
+
+                        sw.Write($"{prefix}self.create.drive_direct({speed}, {speed})" +
+                            $"{prefix}self.time.sleep({pauseTime})" +
+                            $"{prefix}self.create.drive_direct(0,0)");
+                            scopeCount--;
+                            if (scopeCount == 0)
+                            {
+                                prefix = removePrefix(prefix, "\t");
+
+                            }
+                        sw.Write($"{prefix}");
+                    }                    
+                   
+                   
+
+                    break;
+               
+                default:
+                    Console.WriteLine("Wrong!");
+                    break;
+                    
+            }
+
+            return base.VisitFunction_expr(context);
         }
 
 
@@ -86,8 +182,41 @@ namespace RoombaCompiler2
         public override bool VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
             Console.WriteLine($"Numeric Expression {context.GetText()}");
+            Console.WriteLine("Children: " + context.ChildCount);
+            if (context.ChildCount == 1)
+            {
+                Console.WriteLine("Yo man " + context.GetChild(0).GetText().ToString());
+                try
+                {
+                    var test = float.Parse(context.GetChild(0).GetText());
+                    Console.WriteLine("Succesfully accepted!");
+
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("Error man");
+                }
+                
+            }
+            else
+            {
+                
+            }
+
 
             return base.VisitNum_expr(context);
         }
+
+        private string removePrefix(string sourceString, string removeString)
+        {
+            int index = sourceString.IndexOf(removeString);
+            string cleanPath = (index < 0)
+                ? sourceString
+                : sourceString.Remove(index, removeString.Length);
+
+            return cleanPath;
+
+        }
+
     }
 }
