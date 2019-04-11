@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 
 using Antlr4.Runtime.Tree;
+using RoombaCompiler2.TypeChecking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,10 +28,14 @@ namespace RoombaCompiler2
             var tree = parser.program();
 
             
-
+            
             var visitor = new PrintVisitor();
 
             visitor.VisitProgram(tree);
+
+            var typeVisitor = new TypeCheckerVisitor();
+
+            typeVisitor.VisitProgram(tree);
 
             
             Console.WriteLine("Works!");

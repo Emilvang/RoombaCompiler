@@ -29,6 +29,7 @@ using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using DFA = Antlr4.Runtime.Dfa.DFA;
+using RoombaCompiler2.TypeChecking;
 
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.7.2")]
 [System.CLSCompliant(false)]
@@ -1264,6 +1265,7 @@ public partial class GrammarParser : Parser {
 	}
 
 	public partial class Num_exprContext : ParserRuleContext {
+        public EExpressionType Type;
 		public IToken op;
 		public Var_exprContext var_expr() {
 			return GetRuleContext<Var_exprContext>(0);
