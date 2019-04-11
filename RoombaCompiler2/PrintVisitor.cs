@@ -182,6 +182,27 @@ namespace RoombaCompiler2
         public override bool VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
             Console.WriteLine($"Numeric Expression {context.GetText()}");
+            Console.WriteLine("Children: " + context.ChildCount);
+            if (context.ChildCount == 1)
+            {
+                Console.WriteLine("Yo man " + context.GetChild(0).GetText().ToString());
+                try
+                {
+                    var test = float.Parse(context.GetChild(0).GetText());
+                    Console.WriteLine("Succesfully accepted!");
+
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("Error man");
+                }
+                
+            }
+            else
+            {
+                
+            }
+
 
             return base.VisitNum_expr(context);
         }
