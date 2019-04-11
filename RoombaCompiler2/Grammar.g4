@@ -23,7 +23,7 @@ grammar Grammar;
    	;
 
  var_decl
-	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' expr 
+	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' (expr | logic_expr)
 	 | (INTDECL | FLOATDECL | BOOLDECL) LISTDECL  IDENTIFIER '=' '[' ((expr | logic_expr) (',' (expr | logic_expr))*)? ']'
 	 ;
  
