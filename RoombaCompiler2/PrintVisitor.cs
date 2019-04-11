@@ -119,7 +119,7 @@ namespace RoombaCompiler2
             return base.VisitStmt(context);
         }
 
-        public override bool VisitFunction_expr([NotNull] GrammarParser.Function_exprContext context)
+        public override bool VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
             Console.WriteLine("Function Expression");
 
@@ -157,7 +157,7 @@ namespace RoombaCompiler2
                     
             }
 
-            return base.VisitFunction_expr(context);
+            return base.VisitFunc_expr(context);
         }
 
 
