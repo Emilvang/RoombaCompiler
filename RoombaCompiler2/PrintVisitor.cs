@@ -87,7 +87,6 @@ namespace RoombaCompiler2
 
         public override bool VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
-            context.children.
             Console.WriteLine($"Numeric Expression {context.GetText()}");
 
             return base.VisitNum_expr(context);
