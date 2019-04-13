@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
 using System.IO;
+using System.Data;
 
 
 namespace RoombaCompiler2
 {
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
-        //Prefix can be used for indented to the correct premise, but needs way to check if out of for/while loop and indent back. Maybe an endloop grammar?
-        //Cant figure it out.
+        
         string prefix = "\r\n\t";
         int scopeCount = 0;
         string path = @"pythonScript.txt";
@@ -34,6 +34,34 @@ namespace RoombaCompiler2
 
 
             return base.VisitProgram(context);
+        }
+
+        public override bool VisitLogic_expr([NotNull] GrammarParser.Logic_exprContext context)
+        {
+
+              
+            Console.WriteLine("Logical: Children: " + context.ChildCount);
+            DataTable dt = new DataTable();
+            int children = context.ChildCount;
+
+            var element = SearchAndReplace(context.GetText());
+
+            try
+            {
+                Console.WriteLine("HERE2:" + dt.Compute(element, "")); 
+                
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Error in logical expression");
+            }
+                   
+                            
+
+
+
+
+            return base.VisitLogic_expr(context);
         }
 
         public override bool VisitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
@@ -60,7 +88,10 @@ namespace RoombaCompiler2
         public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             Console.WriteLine("Iterative statement");
-            
+            //How to use?
+            Dictionary<string, object> LocalScope = new Dictionary<string, object>();
+
+
             switch (context.GetChild(0).GetText())
             {
                 case "for":
@@ -96,11 +127,14 @@ namespace RoombaCompiler2
 
         public override bool VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-            Console.WriteLine("Var Statement " + context.GetText());    
+            Console.WriteLine("Var Statement here " + context.GetText());    
             
 
             //Write each child to pythonScript.txt. Each child can be translated if necessary.
             //Should be added to the symbol table or something?
+
+
+            /* Just some experimenting with code generation
             for (int i = 0; i < context.children.Count; i++)
             {
                 using (StreamWriter sw = File.AppendText(path))
@@ -108,6 +142,7 @@ namespace RoombaCompiler2
                     sw.Write(context.GetChild(i).GetText());
                 }
             }
+            */
 
             return base.VisitVar_stmt(context);
         }
@@ -125,9 +160,27 @@ namespace RoombaCompiler2
 
             switch (context.GetChild(0).GetText())
             {
-                case "Drive":                    
-                    int distance = Convert.ToInt32(context.GetChild(2).GetText());
-                    int speed = Convert.ToInt32(context.GetChild(4).GetText()) * 10;
+                case "Drive":
+
+                    int distance;
+                    if (Int32.TryParse((context.GetChild(2).GetText()), out distance)) ;
+                    else
+                    {
+                        string variable = Convert.ToString(MainScopeClass.MainScope[context.GetChild(2).GetText()]);
+                        Int32.TryParse(variable, out distance);
+                    }
+
+                    int speed;
+                    if (Int32.TryParse((context.GetChild(4).GetText()), out speed)) ;
+                    else
+                    {
+                        string variable = Convert.ToString(MainScopeClass.MainScope[context.GetChild(4).GetText()]);
+                        Int32.TryParse(variable, out speed);
+                    }
+                    speed *= 10;                    
+
+
+
                     int pauseTime = Math.Abs(distance / (speed / 10));
 
                     
@@ -164,13 +217,45 @@ namespace RoombaCompiler2
         public override bool VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
             Console.WriteLine("Variable Declaration " + context.GetText());
+            DataTable dt = new DataTable();
+
+
+
+
+            string expression = context.GetChild(3).GetText();            
+                        
+            expression = SearchAndReplace(expression);
+                       
+
+            //Doesn't work with variables in math expressions
+            //Doesn't work with bools
+            if (!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText()))
+            {
+                MainScopeClass.MainScope.Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
+                Console.WriteLine($"HERE: {context.GetChild(1).GetText()} {dt.Compute(expression, "")}");
+            }
+            else
+            {
+                throw new Exception("Variable already exists!");
+            }
 
             return base.VisitVar_decl(context);
         }
 
         public override bool VisitVar_expr([NotNull] GrammarParser.Var_exprContext context)
         {
-            Console.WriteLine(context.GetText());
+            Console.WriteLine("Variable Expression" + context.GetText());
+
+            try
+            {
+                Console.WriteLine(MainScopeClass.MainScope[context.GetText()]);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Something went wrong..");
+            }
+
+
             return base.VisitVar_expr(context);
         }
         public override bool VisitPrint([NotNull] GrammarParser.PrintContext context)
@@ -181,19 +266,18 @@ namespace RoombaCompiler2
 
         public override bool VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
-            Console.WriteLine($"Numeric Expression {context.GetText()}");
-            Console.WriteLine("Children: " + context.ChildCount);
-            if (context.ChildCount == 1)
-            {
-                Console.WriteLine("Yo man " + context.GetChild(0).GetText().ToString());
+            Console.WriteLine($"Numeric Expression {context.GetText()}");            
+            if (context.ChildCount == 1)            {
+                string expression = SearchAndReplace(context.GetChild(0).GetText());
                 try
                 {
-                    var test = float.Parse(context.GetChild(0).GetText());
+                    var test = float.Parse(expression);
                     Console.WriteLine("Succesfully accepted!");
 
                 }
                 catch(Exception)
                 {
+                    
                     Console.WriteLine("Error man");
                 }
                 
@@ -216,6 +300,27 @@ namespace RoombaCompiler2
 
             return cleanPath;
 
+        }
+        //Function for finding variables in mathematical expressions and converting them to their int values. Only works on ints and floats. 
+        private string SearchAndReplace(string sourceString)
+        {
+            foreach (var variable in MainScopeClass.MainScope)
+            {                
+                try
+                {
+                    if (sourceString.Contains(variable.Key.ToString()))
+                    {
+                        sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
+                        Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Value.ToString()}");
+                    }
+                    
+                }
+                catch(Exception)
+                {
+
+                }
+            }
+            return sourceString;
         }
 
     }

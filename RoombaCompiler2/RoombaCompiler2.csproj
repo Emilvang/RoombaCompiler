@@ -54,6 +54,7 @@
     <Compile Include="GrammarListener.cs" />
     <Compile Include="GrammarParser.cs" />
     <Compile Include="GrammarVisitor.cs" />
+    <Compile Include="MainScopeClass.cs" />
     <Compile Include="PrintVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

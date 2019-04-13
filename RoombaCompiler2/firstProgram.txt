@@ -1,6 +1,7 @@
 Program 
 {
 
-bool Horse = True
+
+bool Horse = 5 == 5 or 4 == 6
 
 }

@@ -13,11 +13,15 @@ namespace RoombaCompiler2.TypeChecking
         {
             if (context.ChildCount == 1)
             {
-                if (int.TryParse(context.GetChild(0).GetText(), out var result))
+                var element = context.GetChild(0).GetText();
+
+                if (MainScopeClass.MainScope.ContainsKey(element)) element = MainScopeClass.MainScope[element].ToString();
+
+                if (int.TryParse(element, out var result))
                 {
                     return EExpressionType.Int;
                 }
-                else if (float.TryParse(context.GetChild(0).GetText(), out var result2))
+                else if (float.TryParse(element, out var result2))
                 {
                     return EExpressionType.Float;
                 }
