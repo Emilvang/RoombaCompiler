@@ -9,7 +9,14 @@ int LocalVariable = 6
 for i = 0 to 6 
 {
 int LocalVariable2 = 7
+
+for i = 0 to 7 
+{
+int NestedVariable1 = 8
 }
+
+}
+
 
 int GlobalVariable5 = 13
 

@@ -90,6 +90,13 @@ namespace RoombaCompiler2
         {
             Console.WriteLine("Iterative statement");
 
+
+            var parent = context.GetRuleContext<Antlr4.Runtime.ParserRuleContext>(0).Parent.ToStringTree();
+            Console.WriteLine("Parent: " + parent);
+
+           
+
+
             realScopeCount = MainScopeClass.Scopes.Count + 1;
             Dictionary<string, object> localScope = new Dictionary<string, object>();
             Console.WriteLine("REAL: " + realScopeCount);
@@ -222,16 +229,14 @@ namespace RoombaCompiler2
             Console.WriteLine("Variable Declaration " + context.GetText());
             DataTable dt = new DataTable();
 
-
+            
 
 
             string expression = context.GetChild(3).GetText();            
                         
-            expression = SearchAndReplace(expression);
-                       
+            expression = SearchAndReplace(expression);                      
 
-            //Doesn't work with variables in math expressions
-            //Doesn't work with bools
+            
             if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText()) || (!(MainScopeClass.Scopes[realScopeCount].ContainsKey(context.GetChild(1).GetText())))))
             {
                 if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())) && realScopeCount == MainScopeClass.Scopes.Count - 1)
