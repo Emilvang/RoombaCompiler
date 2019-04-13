@@ -27,14 +27,18 @@ grammar Grammar;
 	 | (INTDECL | FLOATDECL | BOOLDECL) LISTDECL  IDENTIFIER '=' '[' ((expr | logic_expr) (',' (expr | logic_expr))*)? ']'
 	 ;
  
+ parameter_decl
+	 : (INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER
+	 ;
+
  cond_stmt
     	: IF cond=logic_expr '{' stmts? '}' (ELSEIF logic_expr '{' stmts? '}')* (ELSE '{' stmts? '}')?
     	;
 
  
  func_stmt
-    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' ('{' stmts? return_stmt '}')?
-		| VOID  IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' ('{' stmts? '}')?
+    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' parameter_decl (',' parameter_decl)* ')' '{' stmts? return_stmt '}'
+		| VOID  IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' '{' stmts? '}'
     	;
  
  func_expr

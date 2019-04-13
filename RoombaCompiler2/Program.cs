@@ -31,7 +31,10 @@ namespace RoombaCompiler2
 
             visitor.VisitProgram(tree);
 
-            
+            var listener = new Listener();
+            ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+            parseTreeWalker.Walk(listener, tree);
+
             Console.WriteLine("Works!");
             Console.ReadLine();
         }

@@ -81,6 +81,16 @@ public interface IGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVar_decl([NotNull] GrammarParser.Var_declContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.parameter_decl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterParameter_decl([NotNull] GrammarParser.Parameter_declContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.parameter_decl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitParameter_decl([NotNull] GrammarParser.Parameter_declContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.cond_stmt"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

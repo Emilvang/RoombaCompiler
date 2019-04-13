@@ -60,7 +60,7 @@
     <Compile Include="GrammarListener.cs" />
     <Compile Include="GrammarParser.cs" />
     <Compile Include="GrammarVisitor.cs" />
-    <Compile Include="Listerner.cs" />
+    <Compile Include="Listener.cs" />
     <Compile Include="ScopeandTypes.cs" />
     <Compile Include="PrintVisitor.cs" />
     <Compile Include="Program.cs" />

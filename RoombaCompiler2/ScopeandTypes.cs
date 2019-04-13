@@ -8,7 +8,7 @@ namespace RoombaCompiler2
 {
     public interface IScope
     {
-        String GetScopeName(); 
+        string GetScopeName(); 
         Scope GetEnclosingScope(); 
         void Define(Symbol sym); 
         Symbol Resolve(string name); 
@@ -22,11 +22,15 @@ namespace RoombaCompiler2
 
     public class Scope : IScope
     {
-        List<Symbol> Members { get; set; }
-        Scope EnclosingScope { get; set; }
+        public List<Symbol> Members { get; set; }
+        public Scope EnclosingScope { get; set; }
 
-        public Scope() { }
-
+        public Scope() { Members = new List<Symbol>(); }
+        public Scope (Scope enclosingScope)
+        {
+            Members = new List<Symbol>();
+            EnclosingScope = enclosingScope;
+        }
         public Scope (List<Symbol> symbols)
         {
             Members = symbols;
@@ -49,7 +53,7 @@ namespace RoombaCompiler2
                 return null;
         }
 
-        public String GetScopeName()
+        public string GetScopeName()
         {
             return "g";
         }
@@ -65,10 +69,10 @@ namespace RoombaCompiler2
 
     public class Symbol
     {
-        public String Name; // All symbols at least have a name
-        public Type Type; // Symbols have types
+        public string Name; // All symbols at least have a name
+        public string Type; 
 
-        public Symbol(string name, Type type)
+        public Symbol(string name, string type)
         {
             Name = name;
             Type = type;
@@ -77,7 +81,7 @@ namespace RoombaCompiler2
 
     public class VariableSymbol : Symbol
     {
-        public VariableSymbol(String name, Type type) : base(name, type) { }
+        public VariableSymbol(string name, string type) : base(name, type) { }
     }
 
 }
