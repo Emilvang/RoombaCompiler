@@ -1,33 +1,26 @@
 Program 
 {
 int GlobalVariable = 5
-for i = 0 to 5 
-{
-int LocalVariable = 6
-}
 
 for i = 0 to 6 
 {
+# int LocalVariable2 = 7 #
+
+	for i = 0 to 7 
+	{
+	int NestedVariable1 = 8
+	}
+	for i = 0 to 5 
+	{
+	int NestedVariable2 = 7
+	}
 int LocalVariable2 = 7
 
-for i = 0 to 7 
-{
-int NestedVariable1 = 8
 }
 
-}
+int GlobalVariable3 = 9
 
 
-int GlobalVariable5 = 13
-
-for i = 0 to 9
-{
-int LocalVariable3 = 9
-}
-
-int GlobalVariable2 = 8
-int GlobalVariable3 = 10
-int GlobalVariable4 = 12
 
 
 }

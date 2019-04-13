@@ -89,18 +89,18 @@ namespace RoombaCompiler2
         public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             Console.WriteLine("Iterative statement");
-
-
-            var parent = context.GetRuleContext<Antlr4.Runtime.ParserRuleContext>(0).Parent.ToStringTree();
-            Console.WriteLine("Parent: " + parent);
-
-           
+                     
 
 
             realScopeCount = MainScopeClass.Scopes.Count + 1;
             Dictionary<string, object> localScope = new Dictionary<string, object>();
             Console.WriteLine("REAL: " + realScopeCount);
             MainScopeClass.Scopes.Add(realScopeCount, localScope);
+            
+            if (scopeCount > 0)
+            {
+                scopeCount += context.ChildCount;
+            }
 
             switch (context.GetChild(0).GetText())
             {
@@ -113,7 +113,7 @@ namespace RoombaCompiler2
                     int End = Convert.ToInt32(context.GetChild(5).GetText());                    
                     using (StreamWriter sw = File.AppendText(path))
                     {
-                        sw.Write($"for i in range({End}):");
+                        sw.Write($"for i in range({Start},{End}):");
                     }    
                         break;
                 case "while":
@@ -124,6 +124,8 @@ namespace RoombaCompiler2
                     break;
 
             }
+
+
                                     
 
             return base.VisitIter_stmt(context);
@@ -255,7 +257,7 @@ namespace RoombaCompiler2
             {
                 throw new Exception("Variable already exists!");
             }
-
+            //BUGGY HERE
             if (scopeCount != 0) scopeCount--;
             if (scopeCount == 0)
             {
