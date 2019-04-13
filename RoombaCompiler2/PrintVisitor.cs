@@ -12,14 +12,22 @@ namespace RoombaCompiler2
 {
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
-        
+        List<Node> NodeScopes = new List<Node>();
+        int testingScopeCount = 0;
+        int CurrentScope = 0;
         string prefix = "\r\n\t";
         int scopeCount = 0;
         int realScopeCount = 0;
+        //IndexChecker needs more work...
+        int IndexChecker = 1;
         string path = @"pythonScript.txt";
+
+
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
             Console.WriteLine("Program");
+
+            
 
             if (new FileInfo(path).Length != 0)
             {
@@ -72,6 +80,17 @@ namespace RoombaCompiler2
         }
         public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
         {
+            //Not sure how to use these nodes..
+            Node node = new Node();
+            NodeScopes.Add(node);
+
+            foreach (var child in context.children)
+            {
+                Node nodeChild = new Node();
+                node.children.Add(nodeChild);
+            }
+
+
             Console.WriteLine("Statements");         
 
 
@@ -86,26 +105,45 @@ namespace RoombaCompiler2
             return base.VisitFunc_stmt(context);
         }
 
+        
+
         public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
-            Console.WriteLine("Iterative statement");
-                     
 
-
+            
+            Console.WriteLine("Iterative statement");       
+            /*
             realScopeCount = MainScopeClass.Scopes.Count + 1;
             Dictionary<string, object> localScope = new Dictionary<string, object>();
-            Console.WriteLine("REAL: " + realScopeCount);
+            Console.WriteLine("REAL scope count: " + realScopeCount);
             MainScopeClass.Scopes.Add(realScopeCount, localScope);
-            
+
+            //Almost..IndexChecker needs a bit of work. 
+
             if (scopeCount > 0)
             {
-                scopeCount += context.ChildCount;
+                scopeCount--;
             }
+            if (!GrammarParser.ruleNames[context.Parent.Parent.Parent.RuleIndex].Equals("program"))
+            {                
+                foreach (var child in MainScopeClass.Scopes[realScopeCount - IndexChecker])
+                {
+                    MainScopeClass.Scopes[realScopeCount].Add(child.Key, child.Value);
+                }
+                IndexChecker++;
+                //scopeCount += context.ChildCount;
+            
+            }
+            */
+
+
+
+           
 
             switch (context.GetChild(0).GetText())
             {
                 case "for":
-                    scopeCount = context.GetChild(7).ChildCount;
+                    scopeCount += context.GetChild(7).ChildCount;
                     prefix += "\t";
                     Console.WriteLine("Scopecount = " + scopeCount);
                     //Get the inital and end value of i
@@ -228,7 +266,7 @@ namespace RoombaCompiler2
 
         public override bool VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-            Console.WriteLine("Variable Declaration " + context.GetText());
+            Console.WriteLine("Variable Declaration ");
             DataTable dt = new DataTable();
 
             
@@ -257,11 +295,13 @@ namespace RoombaCompiler2
             {
                 throw new Exception("Variable already exists!");
             }
-            //BUGGY HERE
+            //Add IndexChecker-- here somehow?
             if (scopeCount != 0) scopeCount--;
             if (scopeCount == 0)
             {
-                if (realScopeCount > 0) realScopeCount = 0; 
+                //realScopeCount = IndexChecker;                
+                
+                if (realScopeCount > 0) { realScopeCount = 0; }
             }
 
 
@@ -329,7 +369,7 @@ namespace RoombaCompiler2
         }
         //Function for finding variables in mathematical expressions and converting them to their int values. Only works on ints and floats. 
         private string SearchAndReplace(string sourceString)
-        {
+        {            
             foreach (var variable in MainScopeClass.MainScope)
             {                
                 try
@@ -347,6 +387,20 @@ namespace RoombaCompiler2
                 }
             }
             return sourceString;
+        }
+
+        private void EnterRule()
+        {
+            Dictionary<string, object> LocalScope = new Dictionary<string, object>();
+            MainScopeClass.Scopes.Add(MainScopeClass.Scopes.Count + 1, LocalScope);
+            testingScopeCount = MainScopeClass.Scopes.Count;
+            CurrentScope = MainScopeClass.Scopes.Count;
+
+        }
+        private void ExitRule()
+        {
+            CurrentScope -= 1;
+            testingScopeCount -= 1;
         }
 
     }
