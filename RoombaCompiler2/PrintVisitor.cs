@@ -15,6 +15,7 @@ namespace RoombaCompiler2
         
         string prefix = "\r\n\t";
         int scopeCount = 0;
+        int realScopeCount = 0;
         string path = @"pythonScript.txt";
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
@@ -88,9 +89,11 @@ namespace RoombaCompiler2
         public override bool VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             Console.WriteLine("Iterative statement");
-            //How to use?
-            Dictionary<string, object> LocalScope = new Dictionary<string, object>();
 
+            realScopeCount = MainScopeClass.Scopes.Count + 1;
+            Dictionary<string, object> localScope = new Dictionary<string, object>();
+            Console.WriteLine("REAL: " + realScopeCount);
+            MainScopeClass.Scopes.Add(realScopeCount, localScope);
 
             switch (context.GetChild(0).GetText())
             {
@@ -229,15 +232,31 @@ namespace RoombaCompiler2
 
             //Doesn't work with variables in math expressions
             //Doesn't work with bools
-            if (!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText()))
+            if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText()) || (!(MainScopeClass.Scopes[realScopeCount].ContainsKey(context.GetChild(1).GetText())))))
             {
-                MainScopeClass.MainScope.Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
-                Console.WriteLine($"HERE: {context.GetChild(1).GetText()} {dt.Compute(expression, "")}");
+                if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())) && realScopeCount == MainScopeClass.Scopes.Count - 1)
+                 {
+                    MainScopeClass.MainScope.Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
+                    Console.WriteLine($"HERE: {context.GetChild(1).GetText()} {dt.Compute(expression, "")}");
+                 }
+                else 
+                        {
+                    MainScopeClass.Scopes[realScopeCount].Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
+
+                        }               
+                
             }
             else
             {
                 throw new Exception("Variable already exists!");
             }
+
+            if (scopeCount != 0) scopeCount--;
+            if (scopeCount == 0)
+            {
+                if (realScopeCount > 0) realScopeCount = 0; 
+            }
+
 
             return base.VisitVar_decl(context);
         }

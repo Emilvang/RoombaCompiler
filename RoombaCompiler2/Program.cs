@@ -41,9 +41,15 @@ namespace RoombaCompiler2
             typeVisitor.VisitProgram(tree);
             Console.WriteLine("Typechecker visitor done!");
             Console.WriteLine("Checking main scope:");
-            foreach (var element in MainScopeClass.MainScope)
+            int scopeCount = 0;
+            foreach (var element in MainScopeClass.Scopes)
             {
-                Console.WriteLine(element);
+                Console.WriteLine("Scope : " + scopeCount);
+                foreach(var child in element.Value)
+                {
+                    Console.WriteLine(child);
+                }
+                scopeCount++;
             }
 
             Console.ReadLine();
