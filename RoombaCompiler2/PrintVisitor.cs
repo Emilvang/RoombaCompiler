@@ -9,9 +9,17 @@ namespace RoombaCompiler2
 {
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
+        public Stack<Scope> ScopeStack { get; set; } 
+
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
+            Console.WriteLine(context.ChildCount);
+            //GlobalScope = new Scope()
             Console.WriteLine("Program");
+            ScopeStack = new Stack<Scope>();
+            ScopeStack.Push(new Scope());
+            
+            
 
             return base.VisitProgram(context);
         }
@@ -30,6 +38,17 @@ namespace RoombaCompiler2
         public override bool VisitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
             Console.WriteLine("Function statement");
+            //(Console.WriteLine(context.Ch);
+
+            ScopeStack.Push(new Scope());
+            foreach(Antlr4.Runtime.Tree.IParseTree tree in context.children)
+            {
+                Console.WriteLine(tree.GetType().ToString());
+                
+                
+            }
+            
+            
             return base.VisitFunc_stmt(context);
         }
 

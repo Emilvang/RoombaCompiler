@@ -11,17 +11,32 @@ namespace RoombaCompiler2
         String GetScopeName(); 
         Scope GetEnclosingScope(); 
         void Define(Symbol sym); 
-        Symbol Resolve(string name); 
+        Symbol Resolve(string name); 
+
     }
 
     public interface IType
     {
         String GetName();
-    }
+    }
+
     public class Scope : IScope
     {
         List<Symbol> Members { get; set; }
         Scope EnclosingScope { get; set; }
+
+        public Scope() { }
+
+        public Scope (List<Symbol> symbols)
+        {
+            Members = symbols;
+        }
+
+        public Scope (Scope enclosingScope, List<Symbol> symbols)
+        {
+            EnclosingScope = enclosingScope;
+            Members = symbols;
+        }
 
         public Symbol Resolve(string name)
         {
