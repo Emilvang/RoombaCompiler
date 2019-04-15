@@ -68,9 +68,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="firstProgram.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="pythonScript.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -12,17 +12,22 @@ namespace RoombaCompiler2
         public ScopeNode Parent;
 
         public Dictionary<string, string> SymbolTable = new Dictionary<string, string>();
+        
 
     }
 
+    
 
     public class ScopeListener : GrammarBaseListener
     {
         ScopeNode currentScope;
+        public List<ScopeNode> Scopes = new List<ScopeNode>();
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             ScopeNode GlobalScope = new ScopeNode();
+            Scopes.Add(GlobalScope);
             currentScope = GlobalScope;
+            
             base.EnterProgram(context);
         }
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
@@ -39,26 +44,27 @@ namespace RoombaCompiler2
                 {
                     LookUpScope(context.GetChild(0).GetText());
                 }
-            }
-            //else if (context.ChildCount == 3)
-            //{
-            //    if (context.GetChild(0).ChildCount == 1 && !(int.TryParse(context.GetChild(0).GetText(), out var result)))
-            //    {
-            //        LookUpScope(context.GetChild(0).GetText());
-            //    }
-
-            //    if (context.GetChild(2).ChildCount == 1 && !(int.TryParse(context.GetChild(2).GetText(), out var result2)))
-            //    {
-            //        LookUpScope(context.GetChild(2).GetText());
-            //    }
-            //}
+            }           
 
             base.EnterNum_expr(context);
+        }
+
+        public override void EnterLogic_expr([NotNull] GrammarParser.Logic_exprContext context)
+        {
+
+
+
+            base.EnterLogic_expr(context);
+        }
+        public override void ExitLogic_expr([NotNull] GrammarParser.Logic_exprContext context)
+        {
+            base.ExitLogic_expr(context);
         }
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             ScopeNode LocalScope = new ScopeNode();
+            Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
 
@@ -73,6 +79,7 @@ namespace RoombaCompiler2
         public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
             ScopeNode LocalScope = new ScopeNode();
+            Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
             base.EnterCond_stmt(context);
@@ -87,6 +94,7 @@ namespace RoombaCompiler2
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
             ScopeNode LocalScope = new ScopeNode();
+            Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
             base.EnterFunc_expr(context);
@@ -97,17 +105,29 @@ namespace RoombaCompiler2
             base.ExitFunc_expr(context);
         }
 
+        //Needs check that variable doesn't exist in parents.
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
+
+
+
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
 
-            currentScope.SymbolTable.Add(variableName, expression);
+
+            if (!LookUpScope(variableName))
+            {
+                currentScope.SymbolTable.Add(variableName, expression);
+            }
+            else
+            {
+                throw new Exception("Variable already exists in local or parent scopes!");
+            }                                
 
             base.EnterVar_decl(context);
         }
 
-        private void LookUpScope(string expression)
+        private bool LookUpScope(string expression)
         {
             ScopeNode Scope = currentScope;
 
@@ -115,22 +135,29 @@ namespace RoombaCompiler2
             {
                 if (Scope.SymbolTable.ContainsKey(expression))
                 {
-                    return;
+                    return true;
                 }
                 else
                 {
                     Scope = Scope.Parent;
 
+                    if (Scope == null)
+                    {
+                        return false;
+                    }
+
                     if (Scope.SymbolTable.ContainsKey(expression))
                     {
-                        return;
+                        return true;
                     }
                 }
             }
             while (Scope.Parent != null);
 
-            throw new Exception($"Variable {expression} not in scopes");
+            return false;
         }
+
+        
 
     }
 }

@@ -36,7 +36,7 @@ namespace RoombaCompiler2
 
             ParseTreeWalker.Walk(listener, tree);
 
-
+            /*
 
             var visitor = new PrintVisitor();
 
@@ -49,7 +49,20 @@ namespace RoombaCompiler2
 
             typeVisitor.VisitProgram(tree);
             Console.WriteLine("Typechecker visitor done!");
+
+            */
             Console.WriteLine("Checking main scope:");
+
+            foreach (var Scope in listener.Scopes)
+            {
+                Console.WriteLine("Scope start:");
+                foreach (var element in Scope.SymbolTable)
+                {
+                    Console.WriteLine(element);
+                }
+
+            }
+
             
 
             Console.ReadLine();
