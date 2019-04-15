@@ -10,6 +10,7 @@ using System.Data;
 
 namespace RoombaCompiler2
 {
+    //Needs updating based on scopes. How to reference scope list from listener?
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
        
@@ -382,7 +383,9 @@ namespace RoombaCompiler2
                 }
             }
             return sourceString;
-        }      
+        }
+        
+       
 
     }
 }
