@@ -29,13 +29,18 @@ namespace RoombaCompiler2
 
             var tree = parser.program();
 
-            
-            
+
+            var listener = new ScopeListener();
+
+            var ParseTreeWalker = new ParseTreeWalker();
+
+            ParseTreeWalker.Walk(listener, tree);
+
+
+
             var visitor = new PrintVisitor();
 
-            var scopeVisitor = new ScopeCheckingVisitor();
-
-            scopeVisitor.VisitProgram(tree);
+            
             
             visitor.VisitProgram(tree);
             Console.WriteLine("Basic visitor done!");
