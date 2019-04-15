@@ -7,16 +7,7 @@ using Antlr4.Runtime.Misc;
 
 namespace RoombaCompiler2
 {
-    public class ScopeNode
-    {
-        public ScopeNode Parent;
-
-        public Dictionary<string, string> SymbolTable = new Dictionary<string, string>();
         
-
-    }
-
-    
 
     public class ScopeListener : GrammarBaseListener
     {

@@ -14,8 +14,7 @@ namespace RoombaCompiler2
     {
         static void Main(string[] args)
         {
-            //Adding translating tools for bools
-            MainScopeClass.AddElements();
+            //Adding translating tools for bools            
             var charStream = CharStreams.fromPath("firstProgram.txt");
 
             var lexer = new GrammarLexer(charStream);
@@ -36,7 +35,9 @@ namespace RoombaCompiler2
 
             ParseTreeWalker.Walk(listener, tree);
 
-            /*
+            MainScopeClass.Scopes = listener.Scopes;
+
+            
 
             var visitor = new PrintVisitor();
 
@@ -50,7 +51,7 @@ namespace RoombaCompiler2
             typeVisitor.VisitProgram(tree);
             Console.WriteLine("Typechecker visitor done!");
 
-            */
+            
             Console.WriteLine("Checking main scope:");
 
             foreach (var Scope in listener.Scopes)

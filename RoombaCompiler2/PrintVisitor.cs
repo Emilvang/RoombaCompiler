@@ -17,16 +17,13 @@ namespace RoombaCompiler2
         string prefix = "\r\n\t";
         int scopeCount = 0;
         
-        //IndexChecker needs more work...
-        int IndexChecker = 1;
+        //IndexChecker needs more work...       
         string path = @"pythonScript.txt";
 
 
         public override bool VisitProgram([NotNull] GrammarParser.ProgramContext context)
         {
-            Console.WriteLine("Program");
-
-            
+            Console.WriteLine("Program");            
 
             if (new FileInfo(path).Length != 0)
             {
@@ -62,12 +59,8 @@ namespace RoombaCompiler2
             catch(Exception)
             {
                 Console.WriteLine("Error in logical expression");
-            }
-                   
-                            
-
-
-
+            }                  
+                           
 
             return base.VisitLogic_expr(context);
         }
@@ -133,10 +126,6 @@ namespace RoombaCompiler2
             
             }
             */
-
-
-
-           
 
             switch (context.GetChild(0).GetText())
             {
@@ -214,7 +203,7 @@ namespace RoombaCompiler2
                     if (Int32.TryParse((context.GetChild(2).GetText()), out distance)) ;
                     else
                     {
-                        string variable = Convert.ToString(MainScopeClass.MainScope[context.GetChild(2).GetText()]);
+                        string variable = LookUp(context.GetChild(2).GetText());
                         Int32.TryParse(variable, out distance);
                     }
 
@@ -222,7 +211,7 @@ namespace RoombaCompiler2
                     if (Int32.TryParse((context.GetChild(4).GetText()), out speed)) ;
                     else
                     {
-                        string variable = Convert.ToString(MainScopeClass.MainScope[context.GetChild(4).GetText()]);
+                        string variable = LookUp(context.GetChild(4).GetText());
                         Int32.TryParse(variable, out speed);
                     }
                     speed *= 10;                    
@@ -272,9 +261,10 @@ namespace RoombaCompiler2
 
             string expression = context.GetChild(3).GetText();            
                         
-            expression = SearchAndReplace(expression);                      
+            expression = SearchAndReplace(expression);                     
 
             
+            /*
             if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())))
             {
                 if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())))
@@ -293,7 +283,7 @@ namespace RoombaCompiler2
             {
                 throw new Exception("Variable already exists!");
             }
-            //Add IndexChecker-- here somehow?
+            */
             if (scopeCount != 0) scopeCount--;
             if (scopeCount == 0)
             {
@@ -310,7 +300,7 @@ namespace RoombaCompiler2
 
             try
             {
-                Console.WriteLine(MainScopeClass.MainScope[context.GetText()]);
+                Console.WriteLine(LookUp(context.GetText()));
             }
             catch(Exception)
             {
@@ -365,24 +355,44 @@ namespace RoombaCompiler2
         }
         //Function for finding variables in mathematical expressions and converting them to their int values. Only works on ints and floats. 
         private string SearchAndReplace(string sourceString)
-        {            
-            foreach (var variable in MainScopeClass.MainScope)
-            {                
-                try
+        {
+            foreach (var Scope in MainScopeClass.Scopes)
+            {
+                foreach (var variable in Scope.SymbolTable)
                 {
-                    if (sourceString.Contains(variable.Key.ToString()))
+                    try
                     {
-                        sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
-                        Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Value.ToString()}");
-                    }
-                    
-                }
-                catch(Exception)
-                {
+                        if (sourceString.Contains(variable.Key.ToString()))
+                        {
+                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
+                            Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Value.ToString()}");
+                        }
 
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                 }
             }
             return sourceString;
+        }
+
+        private string LookUp(string expression)
+        {
+
+            foreach(var Scope in MainScopeClass.Scopes)
+            {
+                foreach(var pair in Scope.SymbolTable)
+                {
+                    if (pair.Key == expression)
+                    {
+                        return pair.Value;
+                    }
+                }
+            }
+            throw new Exception("Can't find variable in scopes!");
+
         }
         
        

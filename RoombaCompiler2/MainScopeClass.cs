@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace RoombaCompiler2
 {
-    public static class MainScopeClass
+    public class MainScopeClass
     {
-        public static Dictionary<string, object> MainScope = new Dictionary<string, object>();           
-        public static Dictionary<int, Dictionary<string, object>> Scopes = new Dictionary<int, Dictionary<string, object>>();
+        //public Dictionary<string, string> SymbolTable = new Dictionary<string, string>();
+        public static List<ScopeNode> Scopes;
 
-        public static void AddElements()
+
+        /*
+        public void AddElements()
         {
             Scopes.Add(0, MainScope);
             MainScope.Add("And", " AND ");
@@ -20,6 +22,7 @@ namespace RoombaCompiler2
             MainScope.Add("or", " OR ");
             MainScope.Add("==", "=");
         }
+        */
 
     }
     

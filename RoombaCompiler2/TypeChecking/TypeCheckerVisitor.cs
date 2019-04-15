@@ -13,22 +13,40 @@ namespace RoombaCompiler2.TypeChecking
         {
             if (context.ChildCount == 1)
             {
-                var element = context.GetChild(0).GetText();
+                var element = context.GetChild(0).GetText();                
 
-                if (MainScopeClass.MainScope.ContainsKey(element)) element = MainScopeClass.MainScope[element].ToString();
-
-                if (int.TryParse(element, out var result))
+                int result = 0;
+                if (int.TryParse(element, out result))
                 {
                     return EExpressionType.Int;
                 }
-                else if (float.TryParse(element, out var result2))
+                else
+                {
+                    element = LookUp(element);
+
+                    if (int.TryParse(element, out result))
+                    {
+                        return EExpressionType.Int;
+                    }
+
+                }
+                float result2 = 0;
+                if (float.TryParse(element, out result2))
                 {
                     return EExpressionType.Float;
                 }
                 else
                 {
-                    return EExpressionType.Unknown;
+                    element = LookUp(element);
+
+                    if (float.TryParse(element, out result2))
+                    {
+                        return EExpressionType.Float;
+                    }
                 }
+                
+                return EExpressionType.Unknown;
+                
             }
             else if (context.ChildCount == 3)
             {
@@ -49,6 +67,45 @@ namespace RoombaCompiler2.TypeChecking
             }
 
             return base.VisitNum_expr(context);
+        }
+        private string LookUp(string expression)
+        {
+
+            foreach (var Scope in MainScopeClass.Scopes)
+            {
+                foreach (var pair in Scope.SymbolTable)
+                {
+                    if (pair.Key == expression)
+                    {
+                        return pair.Value;
+                    }
+                }
+            }
+            throw new Exception("Can't find variable in scopes!");
+
+        }
+        private string SearchAndReplace(string sourceString)
+        {
+            foreach (var Scope in MainScopeClass.Scopes)
+            {
+                foreach (var variable in Scope.SymbolTable)
+                {
+                    try
+                    {
+                        if (sourceString.Contains(variable.Key.ToString()))
+                        {
+                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
+                            Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Value.ToString()}");
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
+            return sourceString;
         }
     }
 }
