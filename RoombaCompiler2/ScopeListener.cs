@@ -69,6 +69,34 @@ namespace RoombaCompiler2
             currentScope = currentScope.Parent;
             base.ExitIter_stmt(context);
         }
+
+        public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
+        {
+            ScopeNode LocalScope = new ScopeNode();
+            LocalScope.Parent = currentScope;
+            currentScope = LocalScope;
+            base.EnterCond_stmt(context);
+        }
+        public override void ExitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
+        {
+            currentScope = currentScope.Parent;
+            base.ExitCond_stmt(context);
+        }
+
+        //Should it be Func_expr or Func_stmt?
+        public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        {
+            ScopeNode LocalScope = new ScopeNode();
+            LocalScope.Parent = currentScope;
+            currentScope = LocalScope;
+            base.EnterFunc_expr(context);
+        }
+        public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        {
+            currentScope = currentScope.Parent;
+            base.ExitFunc_expr(context);
+        }
+
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
             var variableName = context.GetChild(1).GetText();
