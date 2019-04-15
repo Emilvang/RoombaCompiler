@@ -12,12 +12,10 @@ namespace RoombaCompiler2
 {
     public class PrintVisitor : GrammarBaseVisitor<bool>
     {
-        List<Node> NodeScopes = new List<Node>();
-        int testingScopeCount = 0;
-        int CurrentScope = 0;
+       
         string prefix = "\r\n\t";
         int scopeCount = 0;
-        int realScopeCount = 0;
+        
         //IndexChecker needs more work...
         int IndexChecker = 1;
         string path = @"pythonScript.txt";
@@ -81,8 +79,7 @@ namespace RoombaCompiler2
         public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
         {
             //Not sure how to use these nodes..
-            Node node = new Node();
-            NodeScopes.Add(node);
+            Node node = new Node();            
 
             foreach (var child in context.children)
             {
@@ -277,16 +274,16 @@ namespace RoombaCompiler2
             expression = SearchAndReplace(expression);                      
 
             
-            if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText()) || (!(MainScopeClass.Scopes[realScopeCount].ContainsKey(context.GetChild(1).GetText())))))
+            if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())))
             {
-                if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())) && realScopeCount == MainScopeClass.Scopes.Count - 1)
+                if ((!MainScopeClass.MainScope.ContainsKey(context.GetChild(1).GetText())))
                  {
                     MainScopeClass.MainScope.Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
                     Console.WriteLine($"HERE: {context.GetChild(1).GetText()} {dt.Compute(expression, "")}");
                  }
                 else 
                         {
-                    MainScopeClass.Scopes[realScopeCount].Add(context.GetChild(1).GetText(), dt.Compute(expression, ""));
+                    //Something
 
                         }               
                 
@@ -299,9 +296,7 @@ namespace RoombaCompiler2
             if (scopeCount != 0) scopeCount--;
             if (scopeCount == 0)
             {
-                //realScopeCount = IndexChecker;                
-                
-                if (realScopeCount > 0) { realScopeCount = 0; }
+                //Something?
             }
 
 
@@ -387,21 +382,7 @@ namespace RoombaCompiler2
                 }
             }
             return sourceString;
-        }
-
-        private void EnterRule()
-        {
-            Dictionary<string, object> LocalScope = new Dictionary<string, object>();
-            MainScopeClass.Scopes.Add(MainScopeClass.Scopes.Count + 1, LocalScope);
-            testingScopeCount = MainScopeClass.Scopes.Count;
-            CurrentScope = MainScopeClass.Scopes.Count;
-
-        }
-        private void ExitRule()
-        {
-            CurrentScope -= 1;
-            testingScopeCount -= 1;
-        }
+        }      
 
     }
 }
