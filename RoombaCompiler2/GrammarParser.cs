@@ -101,6 +101,8 @@ public partial class GrammarParser : Parser {
 	}
 
 	public partial class ProgramContext : ParserRuleContext {
+        public Stack<KeyValuePair<string, object>> SymbolTable => new Stack<KeyValuePair<string, object>>();
+
 		public Var_stmtContext[] var_stmt() {
 			return GetRuleContexts<Var_stmtContext>();
 		}
