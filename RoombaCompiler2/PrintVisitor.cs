@@ -22,6 +22,7 @@ namespace RoombaCompiler2
             Console.WriteLine("Conditional statement");
             return base.VisitCond_stmt(context);
         }
+
         public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
         {
             Console.WriteLine("Statements");
