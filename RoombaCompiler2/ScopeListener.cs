@@ -122,7 +122,7 @@ namespace RoombaCompiler2
         {
             ScopeNode Scope = currentScope;
 
-            do
+            while (Scope != null)
             {
                 if (Scope.SymbolTable.ContainsKey(expression))
                 {
@@ -131,19 +131,8 @@ namespace RoombaCompiler2
                 else
                 {
                     Scope = Scope.Parent;
-
-                    if (Scope == null)
-                    {
-                        return false;
-                    }
-
-                    if (Scope.SymbolTable.ContainsKey(expression))
-                    {
-                        return true;
-                    }
                 }
-            }
-            while (Scope.Parent != null);
+            }            
 
             return false;
         }

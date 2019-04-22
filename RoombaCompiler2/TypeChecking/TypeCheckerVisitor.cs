@@ -73,6 +73,7 @@ namespace RoombaCompiler2.TypeChecking
 
             foreach (var Scope in MainScopeClass.Scopes)
             {
+                //Could add a try instead of checking each variable for more efficiency.
                 foreach (var pair in Scope.SymbolTable)
                 {
                     if (pair.Key == expression)
