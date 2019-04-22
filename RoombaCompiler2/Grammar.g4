@@ -31,9 +31,12 @@ grammar Grammar;
     	: IF cond=logic_expr '{' stmts? '}' (ELSEIF logic_expr '{' stmts? '}')* (ELSE '{' stmts? '}')?
     	;
 
+ parameter_decl 
+		: (INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)
+		;
  
  func_stmt
-    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' ('{' stmts? return_stmt '}')?
+    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' (parameter_decl ( ', ')' ('{' stmts? return_stmt '}')?
 		| VOID  IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' ('{' stmts? '}')?
     	;
  

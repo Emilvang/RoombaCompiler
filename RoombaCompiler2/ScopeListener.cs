@@ -104,7 +104,7 @@ namespace RoombaCompiler2
 
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
-
+            Console.WriteLine(context.GetChild(3).GetText());
 
             if (!LookUpScope(variableName))
             {
