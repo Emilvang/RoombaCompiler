@@ -12,13 +12,13 @@ namespace RoombaCompiler2
     public class ScopeListener : GrammarBaseListener
     {
         // Variables outside program are not registered.
-        ScopeNode currentScope = new ScopeNode();
+        ScopeNode currentScope;
         public List<ScopeNode> Scopes = new List<ScopeNode>();
         
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             ScopeNode GlobalScope = new ScopeNode();
-            Scopes.Add(currentScope);
+            
             Scopes.Add(GlobalScope);
             currentScope = GlobalScope;
             
@@ -97,7 +97,7 @@ namespace RoombaCompiler2
             currentScope = currentScope.Parent;
             base.ExitFunc_expr(context);
         }
-
+        //Needs variable dec. for parametres
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
             ScopeNode LocalScope = new ScopeNode();
