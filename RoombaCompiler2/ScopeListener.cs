@@ -11,11 +11,14 @@ namespace RoombaCompiler2
 
     public class ScopeListener : GrammarBaseListener
     {
-        ScopeNode currentScope;
+        // Variables outside program are not registered.
+        ScopeNode currentScope = new ScopeNode();
         public List<ScopeNode> Scopes = new List<ScopeNode>();
+        
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             ScopeNode GlobalScope = new ScopeNode();
+            Scopes.Add(currentScope);
             Scopes.Add(GlobalScope);
             currentScope = GlobalScope;
             
