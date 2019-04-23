@@ -32,12 +32,12 @@ grammar Grammar;
     	;
 
  parameter_decl 
-		: (INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)
+		: (INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER
 		;
  
  func_stmt
-    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' (parameter_decl ( ', ')' ('{' stmts? return_stmt '}')?
-		| VOID  IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' ('{' stmts? '}')?
+    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' parameter_decl ( ',' parameter_decl)*')' '{' stmts? return_stmt '}'
+		| VOID  IDENTIFIER '(' ((INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER)* ')' '{' stmts? '}'
     	;
  
  func_expr
