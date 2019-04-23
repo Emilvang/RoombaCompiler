@@ -68,6 +68,12 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GrammarParser.parameter_decl"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParameter_decl([NotNull] GrammarParser.Parameter_declContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.func_stmt"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
