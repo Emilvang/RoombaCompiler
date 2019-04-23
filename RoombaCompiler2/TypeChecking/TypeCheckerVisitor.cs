@@ -82,6 +82,7 @@ namespace RoombaCompiler2.TypeChecking
                     }
                 }
             }
+            
             throw new Exception("Can't find variable in scopes!");
 
         }

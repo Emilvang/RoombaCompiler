@@ -48,7 +48,7 @@ namespace RoombaCompiler2
             
             var typeVisitor = new TypeCheckerVisitor();
 
-            typeVisitor.VisitProgram(tree);
+           // typeVisitor.VisitProgram(tree);
             Console.WriteLine("Typechecker visitor done!");
 
             

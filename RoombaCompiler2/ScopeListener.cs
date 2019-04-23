@@ -104,6 +104,12 @@ namespace RoombaCompiler2
             Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
+
+            Console.WriteLine("children:" +context.ChildCount);
+
+            foreach (var child in context.children) { Console.WriteLine(child.GetText()); }
+
+
             base.EnterFunc_stmt(context);
         }
 
