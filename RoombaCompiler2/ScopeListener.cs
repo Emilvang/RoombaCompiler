@@ -23,7 +23,6 @@ namespace RoombaCompiler2
         }
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
         {
-
             base.ExitProgram(context);
         }
 
@@ -96,12 +95,23 @@ namespace RoombaCompiler2
             base.ExitFunc_expr(context);
         }
 
-        //Needs check that variable doesn't exist in parents.
+        public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
+        {
+            ScopeNode LocalScope = new ScopeNode();
+            Scopes.Add(LocalScope);
+            LocalScope.Parent = currentScope;
+            currentScope = LocalScope;
+            base.EnterFunc_stmt(context);
+        }
+
+        public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
+        {
+            currentScope = currentScope.Parent;
+            base.ExitFunc_stmt(context);
+        }
+
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-
-
-
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
 

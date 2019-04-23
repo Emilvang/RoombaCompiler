@@ -52,7 +52,7 @@ namespace RoombaCompiler2
             Console.WriteLine("Typechecker visitor done!");
 
             
-            Console.WriteLine("Checking main scope:");
+            Console.WriteLine("Checking scopes:");
 
             foreach (var Scope in listener.Scopes)
             {
