@@ -11,6 +11,8 @@ namespace RoombaCompiler2.TypeChecking
     {
         public override EExpressionType VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
+            Console.WriteLine("Text = " + context.GetText());
+            Console.WriteLine("ChildCount = " + context.ChildCount);
             if (context.ChildCount == 1)
             {
                 var element = context.GetChild(0).GetText();                
@@ -51,9 +53,11 @@ namespace RoombaCompiler2.TypeChecking
             else if (context.ChildCount == 3)
             {
                 var lhs = context.GetChild(0);
+                Console.WriteLine(context.GetChild(0).GetText());
                 var lhsType = Visit(lhs);
 
                 var rhs = context.GetChild(2);
+                Console.WriteLine(context.GetChild(2).GetText());
                 var rhsType = Visit(rhs);
 
                 if (lhsType != rhsType)

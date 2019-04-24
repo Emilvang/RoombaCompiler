@@ -171,6 +171,16 @@ public interface IGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNum_expr([NotNull] GrammarParser.Num_exprContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.logic_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

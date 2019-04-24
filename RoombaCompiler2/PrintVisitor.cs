@@ -75,11 +75,11 @@ namespace RoombaCompiler2
             //Not sure how to use these nodes..
             Node node = new Node();            
 
-            foreach (var child in context.children)
+            /*foreach (var child in context.children)
             {
                 Node nodeChild = new Node();
                 node.children.Add(nodeChild);
-            }
+            }*/
 
 
             Console.WriteLine("Statements");         
@@ -341,6 +341,12 @@ namespace RoombaCompiler2
 
 
             return base.VisitNum_expr(context);
+        }
+
+        public override bool VisitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
+        {
+            Console.WriteLine("ArithmeticExpr");
+            return base.VisitArithmetic_expr(context);
         }
 
         private string removePrefix(string sourceString, string removeString)

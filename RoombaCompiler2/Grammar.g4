@@ -18,7 +18,7 @@ grammar Grammar;
  
  var_stmt
    	:  IDENTIFIER '=' (expr | logic_expr)
-   	|  IDENTIFIER '[' num_expr ']' '=' (expr | logic_expr)
+   	|  IDENTIFIER '[' expr ']' '=' (expr | logic_expr)
 	|  IDENTIFIER ADDARRAY (expr | logic_expr)
    	;
 
@@ -58,20 +58,23 @@ grammar Grammar;
 		| var_expr
     	| num_expr
 		| func_expr
+		| arithmetic_expr
     	;
  
  var_expr
     	: IDENTIFIER
-    	| IDENTIFIER '[' num_expr ']'
+    	| IDENTIFIER '[' expr ']'
     	;
  
  num_expr
-    	: num_expr op = (MUL | DIV) num_expr
-    	| num_expr op = (ADD | SUB) num_expr
-   		| var_expr
-    	| INT
+    	: INT
     	| FLOAT
     	;
+
+ arithmetic_expr
+	    : (IDENTIFIER | FLOAT | INT) (op = (MUL | DIV) (IDENTIFIER | FLOAT | INT))+
+    	| (IDENTIFIER | FLOAT | INT) (op = (ADD | SUB) (IDENTIFIER | FLOAT | INT))+
+		;
  	
  logic_expr
 	: '(' logic_expr ')'

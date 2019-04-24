@@ -116,6 +116,12 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNum_expr([NotNull] GrammarParser.Num_exprContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.logic_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
