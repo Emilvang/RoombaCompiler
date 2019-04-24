@@ -100,11 +100,11 @@ public partial class GrammarParser : Parser {
 	}
 
 	public partial class ProgramContext : ParserRuleContext {
-		public Var_stmtContext[] var_stmt() {
-			return GetRuleContexts<Var_stmtContext>();
+		public Var_declContext[] var_decl() {
+			return GetRuleContexts<Var_declContext>();
 		}
-		public Var_stmtContext var_stmt(int i) {
-			return GetRuleContext<Var_stmtContext>(i);
+		public Var_declContext var_decl(int i) {
+			return GetRuleContext<Var_declContext>(i);
 		}
 		public Func_stmtContext[] func_stmt() {
 			return GetRuleContexts<Func_stmtContext>();
@@ -146,26 +146,21 @@ public partial class GrammarParser : Parser {
 			State = 38;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTDECL) | (1L << FLOATDECL) | (1L << BOOLDECL) | (1L << VOID) | (1L << IDENTIFIER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTDECL) | (1L << FLOATDECL) | (1L << BOOLDECL) | (1L << VOID))) != 0)) {
 				{
 				State = 36;
 				ErrorHandler.Sync(this);
-				switch (TokenStream.LA(1)) {
-				case IDENTIFIER:
+				switch ( Interpreter.AdaptivePredict(TokenStream,0,Context) ) {
+				case 1:
 					{
-					State = 34; var_stmt();
+					State = 34; var_decl();
 					}
 					break;
-				case INTDECL:
-				case FLOATDECL:
-				case BOOLDECL:
-				case VOID:
+				case 2:
 					{
 					State = 35; func_stmt();
 					}
 					break;
-				default:
-					throw new NoViableAltException(this);
 				}
 				}
 				State = 40;
@@ -1922,7 +1917,7 @@ public partial class GrammarParser : Parser {
 		'\x1A', '\x103', '\x3', '\x2', '\x2', '\x2', '\x1C', '\x109', '\x3', '\x2', 
 		'\x2', '\x2', '\x1E', '\x12F', '\x3', '\x2', '\x2', '\x2', ' ', '\x131', 
 		'\x3', '\x2', '\x2', '\x2', '\"', '\x136', '\x3', '\x2', '\x2', '\x2', 
-		'$', '\'', '\x5', '\b', '\x5', '\x2', '%', '\'', '\x5', '\x10', '\t', 
+		'$', '\'', '\x5', '\n', '\x6', '\x2', '%', '\'', '\x5', '\x10', '\t', 
 		'\x2', '&', '$', '\x3', '\x2', '\x2', '\x2', '&', '%', '\x3', '\x2', '\x2', 
 		'\x2', '\'', '*', '\x3', '\x2', '\x2', '\x2', '(', '&', '\x3', '\x2', 
 		'\x2', '\x2', '(', ')', '\x3', '\x2', '\x2', '\x2', ')', '+', '\x3', '\x2', 

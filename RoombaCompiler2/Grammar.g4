@@ -1,6 +1,6 @@
 grammar Grammar;
  program
-   	: (var_stmt | func_stmt)* 'Program' '{' stmts? '}'
+   	: (var_decl | func_stmt)* 'Program' '{' stmts? '}'
    	; 	 
  
  stmts
