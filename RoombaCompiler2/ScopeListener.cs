@@ -85,16 +85,11 @@ namespace RoombaCompiler2
 
         //Should it be Func_expr or Func_stmt?
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {
-            ScopeNode LocalScope = new ScopeNode();
-            Scopes.Add(LocalScope);
-            LocalScope.Parent = currentScope;
-            currentScope = LocalScope;
+        {            
             base.EnterFunc_expr(context);
         }
         public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {
-            currentScope = currentScope.Parent;
+        {            
             base.ExitFunc_expr(context);
         }
         //Needs variable dec. for parametres
@@ -105,9 +100,30 @@ namespace RoombaCompiler2
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
 
-            Console.WriteLine("children:" +context.ChildCount);
+                       
+            //3 because here the arguments begin.
+            int count2 = 3;
 
-            foreach (var child in context.children) { Console.WriteLine(child.GetText()); }
+            while (true)
+            {
+                var variableName = context.GetChild(count2).GetChild(1).GetText();
+                
+                //null for now, because the variable doesn't have a value at this stage.
+                //Might need other solution later. 
+                if (!LookUpScope(variableName))
+                {
+                    currentScope.SymbolTable.Add(variableName, null);
+                }
+                else
+                {
+                    throw new Exception("Variable already exists in local or parent scopes!");
+                }
+                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
+                if (context.GetChild(count2 + 1).GetText() == ")") break;
+
+                else count2 += 2;
+            }
+                       
 
 
             base.EnterFunc_stmt(context);
