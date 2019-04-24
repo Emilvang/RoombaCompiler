@@ -103,10 +103,12 @@ namespace RoombaCompiler2
                        
             //3 because here the arguments begin.
             int count2 = 3;
-
+            //Probably needs an escape or exception thrown somehow if the programmer makes an error. What happens if the programmer forgets a comma?
+            //Cant handle no arguments.
             while (true)
             {
                 var variableName = context.GetChild(count2).GetChild(1).GetText();
+               
                 
                 //null for now, because the variable doesn't have a value at this stage.
                 //Might need other solution later. 
