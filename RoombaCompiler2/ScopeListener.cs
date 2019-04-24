@@ -11,11 +11,14 @@ namespace RoombaCompiler2
 
     public class ScopeListener : GrammarBaseListener
     {
+        // Variables outside program are not registered.
         ScopeNode currentScope;
         public List<ScopeNode> Scopes = new List<ScopeNode>();
+        
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             ScopeNode GlobalScope = new ScopeNode();
+            
             Scopes.Add(GlobalScope);
             currentScope = GlobalScope;
             
@@ -23,7 +26,6 @@ namespace RoombaCompiler2
         }
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
         {
-
             base.ExitProgram(context);
         }
 
@@ -83,25 +85,60 @@ namespace RoombaCompiler2
 
         //Should it be Func_expr or Func_stmt?
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        {            
+            base.EnterFunc_expr(context);
+        }
+        public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        {            
+            base.ExitFunc_expr(context);
+        }
+        //Needs variable dec. for parametres
+        public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
             ScopeNode LocalScope = new ScopeNode();
             Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
-            base.EnterFunc_expr(context);
+
+                       
+            //3 because here the arguments begin.
+            int count2 = 3;
+            //Probably needs an escape or exception thrown somehow if the programmer makes an error. What happens if the programmer forgets a comma?
+            //Cant handle no arguments.
+            while (true)
+            {
+                var variableName = context.GetChild(count2).GetChild(1).GetText();
+               
+                
+                //null for now, because the variable doesn't have a value at this stage.
+                //Might need other solution later. 
+                if (!LookUpScope(variableName))
+                {
+                    currentScope.SymbolTable.Add(variableName, null);
+                }
+                else
+                {
+                    throw new Exception("Variable already exists in local or parent scopes!");
+                }
+                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
+                if (context.GetChild(count2 + 1).GetText() == ")") break;
+
+                else count2 += 2;
+            }
+                       
+
+
+            base.EnterFunc_stmt(context);
         }
-        public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+
+        public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
             currentScope = currentScope.Parent;
-            base.ExitFunc_expr(context);
+            base.ExitFunc_stmt(context);
         }
 
-        //Needs check that variable doesn't exist in parents.
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-
-
-
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
             Console.WriteLine(context.GetChild(3).GetText());
