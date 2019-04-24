@@ -33,7 +33,7 @@ namespace RoombaCompiler2
 
             var ParseTreeWalker = new ParseTreeWalker();
 
-            //ParseTreeWalker.Walk(listener, tree);
+            ParseTreeWalker.Walk(listener, tree);
 
             MainScopeClass.Scopes = listener.Scopes;
 
@@ -63,12 +63,12 @@ namespace RoombaCompiler2
                 }
 
             }
-            
+            /*
             var codeGen = new CodeGenVisitor();
             codeGen.VisitProgram(tree);
             System.IO.File.WriteAllText(@"C:\\Uni\\roombascript.txt", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
-
+            */
             Console.ReadLine();
         }
     }
