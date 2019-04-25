@@ -1,4 +1,4 @@
-class Run:
+lass Run:
 	def __init__(self,factory):
 	"""Constructor.
 Args:

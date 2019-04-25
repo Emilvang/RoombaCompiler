@@ -63,9 +63,10 @@ namespace RoombaCompiler2
                 }
 
             }
+
+            var codeGen = new CodeGenListener();
+            ParseTreeWalker.Walk(codeGen, tree);
             
-            var codeGen = new CodeGenVisitor();
-            codeGen.VisitProgram(tree);
             System.IO.File.WriteAllText(@"pythonScript.txt", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
             
