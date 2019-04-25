@@ -60,6 +60,13 @@ namespace RoombaCompiler2
             Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
+                        
+
+            if (context.GetChild(0).GetText() == "for")
+            {
+                currentScope.SymbolTable.Add(context.GetChild(1).GetText(), context.GetChild(3).GetText());
+            }
+
 
             base.EnterIter_stmt(context);
         }

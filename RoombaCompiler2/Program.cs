@@ -38,7 +38,7 @@ namespace RoombaCompiler2
             MainScopeClass.Scopes = listener.Scopes;
 
             
-
+            /*
             var visitor = new PrintVisitor();
 
             
@@ -50,7 +50,7 @@ namespace RoombaCompiler2
 
             typeVisitor.VisitProgram(tree);
             Console.WriteLine("Typechecker visitor done!");
-
+            */
             
             Console.WriteLine("Checking scopes:");
 
@@ -63,12 +63,12 @@ namespace RoombaCompiler2
                 }
 
             }
-            /*
+            
             var codeGen = new CodeGenVisitor();
             codeGen.VisitProgram(tree);
-            System.IO.File.WriteAllText(@"C:\\Uni\\roombascript.txt", codeGen.GeneratedCode);
+            System.IO.File.WriteAllText(@"pythonScript.txt", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
-            */
+            
             Console.ReadLine();
         }
     }
