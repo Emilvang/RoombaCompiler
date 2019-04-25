@@ -28,8 +28,12 @@ grammar Grammar;
 	 ;
  
  cond_stmt
-    	: IF cond=logic_expr '{' stmts? '}' elseif_stmt* else_stmt?
+    	:  if_stmt elseif_stmt* else_stmt?
     	;
+
+ if_stmt
+	 :IF logic_expr '{' stmts? '}'
+	 ;
 
  elseif_stmt
 	 : ELSEIF logic_expr '{' stmts? '}'
