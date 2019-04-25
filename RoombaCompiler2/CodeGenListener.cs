@@ -79,23 +79,20 @@ namespace RoombaCompiler2
             base.ExitFunc_stmt(context);
         }
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {
-            
-            GeneratedCode += prefix + context.GetText();        
-
-
+        {            
+            GeneratedCode += prefix + context.GetText();
             base.EnterFunc_expr(context);
         }
 
         public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
-            //Do nothing?
+            //Do nothing
             base.ExitFunc_expr(context);
         }
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
-            prefix += "\t";  
+            
             switch (context.GetChild(0).GetText())
             {
                 case "for":                    
@@ -103,13 +100,13 @@ namespace RoombaCompiler2
                     //Get the inital and end value of i
                     int Start = Convert.ToInt32(context.GetChild(3).GetText());
                     int End = Convert.ToInt32(context.GetChild(5).GetText());                    
-                    GeneratedCode += $"\r\nfor i in range({Start},{End}):";
+                    GeneratedCode += $"{prefix}for i in range({Start},{End}):";
+                    prefix += "\t";
                     break;
                 case "while":                   
                     string expression = context.GetChild(1).GetText();
-
-                    GeneratedCode += $"\r\nwhile {expression}:";
-
+                    GeneratedCode += $"{prefix}while {expression}:";
+                    prefix += "\t";
                     break;
                 default:
                     Console.WriteLine("Error when generating iterative statement code");
@@ -202,10 +199,6 @@ namespace RoombaCompiler2
             prefix = RemovePrefix(prefix, "\t");
             base.ExitElse_stmt(context);
         }
-
-
-
-
 
         private string RemovePrefix(string sourceString, string removeString)
         {
