@@ -10,7 +10,7 @@ using Antlr4.Runtime.Misc;
  * Variable declarations - CHECK
  * Built-in functions - NO
  * Other functions - CHECK
- * Conditional statements - NO - Cannot be done at the moment.
+ * Conditional statements - CHECK
  * Program setup - CHECK?
  * 
  */
@@ -153,10 +153,7 @@ namespace RoombaCompiler2
 
         public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
-            //Cannot be done right now          
-
-
-
+            //Do nothing?      
 
             base.EnterCond_stmt(context);
         }
@@ -166,6 +163,46 @@ namespace RoombaCompiler2
             //prefix = RemovePrefix(prefix, "\t");
             base.ExitCond_stmt(context);
         }
+
+        public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
+        {
+
+            string stringToAdd = $"if {context.GetChild(1).GetText()}:";            
+            GeneratedCode += prefix + stringToAdd;
+            prefix += "\t";
+
+            base.EnterIf_stmt(context);
+        }
+        public override void ExitIf_stmt([NotNull] GrammarParser.If_stmtContext context)
+        {
+            prefix = RemovePrefix(prefix, "\t");
+            base.ExitIf_stmt(context);
+        }
+        public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
+        {
+            string stringToAdd = $"elif {context.GetChild(1).GetText()}:";
+            GeneratedCode += prefix + stringToAdd;
+            prefix += "\t";
+            base.EnterElseif_stmt(context);
+        }
+        public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
+        {
+            prefix = RemovePrefix(prefix, "\t");
+            base.ExitElseif_stmt(context);
+        }
+        public override void EnterElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
+        {
+            string stringToAdd = $"else:";
+            GeneratedCode += prefix + stringToAdd;
+            prefix += "\t";
+            base.EnterElse_stmt(context);
+        }
+        public override void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
+        {
+            prefix = RemovePrefix(prefix, "\t");
+            base.ExitElse_stmt(context);
+        }
+
 
 
 
