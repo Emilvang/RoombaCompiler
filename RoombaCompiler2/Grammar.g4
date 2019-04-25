@@ -28,8 +28,16 @@ grammar Grammar;
 	 ;
  
  cond_stmt
-    	: IF cond=logic_expr '{' stmts? '}' (ELSEIF logic_expr '{' stmts? '}')* (ELSE '{' stmts? '}')?
+    	: IF cond=logic_expr '{' stmts? '}' elseif_stmt* else_stmt?
     	;
+
+ elseif_stmt
+	 : ELSEIF logic_expr '{' stmts? '}'
+	 ;
+
+ else_stmt
+	 : ELSE '{' stmts? '}'
+	 ;
 
  parameter_decl 
 		: (INTDECL | FLOATDECL | BOOLDECL) LISTDECL? IDENTIFIER

@@ -107,6 +107,30 @@ public partial class GrammarBaseListener : IGrammarListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.elseif_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.elseif_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.else_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterElse_stmt([NotNull] GrammarParser.Else_stmtContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.else_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.parameter_decl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
