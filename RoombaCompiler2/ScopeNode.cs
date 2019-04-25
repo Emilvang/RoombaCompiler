@@ -10,8 +10,33 @@ namespace RoombaCompiler2
     {
         public ScopeNode Parent;
 
-        public Dictionary<string, string> SymbolTable = new Dictionary<string, string>();
+        public List<Symbol> SymbolTable = new List<Symbol>();
 
 
+    }
+
+    public class Symbol
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool IsFunction { get; set; }
+
+        public Symbol(string name, string type)
+        {
+            Name = name;
+            Type = type;
+            IsFunction = false;
+        }
+    }
+
+    public class FunctionSymbol : Symbol
+    {
+        public List<Symbol> Parameters { get; set; }
+
+        public FunctionSymbol(string name, string type, List<Symbol> parameters) : base (name, type)
+        {
+            Parameters = parameters;
+            IsFunction = true;
+        }
     }
 }

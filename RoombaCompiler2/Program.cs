@@ -59,7 +59,7 @@ namespace RoombaCompiler2
                 Console.WriteLine("Scope start:");
                 foreach (var element in Scope.SymbolTable)
                 {
-                    Console.WriteLine(element);
+                    Console.WriteLine(element.Name + " " + element.Type);
                 }
 
             }

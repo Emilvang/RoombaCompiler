@@ -10,6 +10,19 @@ namespace RoombaCompiler2
     {
         public List<Node> children = new List<Node>();
         public Node parent;
-        public Dictionary<string, object> Scope = new Dictionary<string, object>();
+        public List<Symbol> SymbolTable = new List<Symbol>();
     }
+
+    /*public class Symbol
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        
+    }
+    
+    public class FunctionSymbol : Symbol
+    {
+        public List<Symbol> Parameters { get; set; }
+        public string ReturnType { get; set; }
+    }*/
 }
