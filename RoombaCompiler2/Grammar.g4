@@ -48,7 +48,7 @@ grammar Grammar;
 		;
  
  func_stmt
-    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' parameter_decl ( ',' parameter_decl)*')' '{' stmts? return_stmt '}'
+    	: (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '(' (parameter_decl ( ',' parameter_decl)*)? ')' '{' stmts? return_stmt '}'
 		| VOID  IDENTIFIER '(' parameter_decl ( ',' parameter_decl)* ')' '{' stmts? '}'
     	;
  
