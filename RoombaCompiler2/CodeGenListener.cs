@@ -49,21 +49,31 @@ namespace RoombaCompiler2
             //Cant handle no arguments.
             while (true)
             {
-                var variableName = context.GetChild(count2).GetChild(1).GetText();                
-                GeneratedCode += $"{variableName}";           
-
-
-                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
-                if (context.GetChild(count2 + 1).GetText() != ")")
+                try
                 {
-                    GeneratedCode += ", ";
-                    count2 += 2;
+                    var variableName = context.GetChild(count2).GetChild(1).GetText();
+                    GeneratedCode += $"{variableName}";
+                    if (context.GetChild(count2 + 1).GetText() != ")")
+                    {
+                        GeneratedCode += ", ";
+                        count2 += 2;
+                    }
+                    else
+                    {
+                        GeneratedCode += $"):";
+                        break;
+                    }
                 }
-                else
+                catch
                 {
                     GeneratedCode += $"):";
                     break;
-                }                         
+                }
+          
+
+
+                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
+               
 
                 
             }

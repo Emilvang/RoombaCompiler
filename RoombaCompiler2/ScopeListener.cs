@@ -152,23 +152,32 @@ namespace RoombaCompiler2
             var parameters = new List<Symbol>();
             while (true)
             {
-                var variableName = context.GetChild(count2).GetChild(1).GetText();
-                var variableType = context.GetChild(count2 - 1).GetText();
+                try
+                {
+                    var variableName = context.GetChild(count2).GetChild(1).GetText();
+                    var variableType = context.GetChild(count2 - 1).GetText();
+
+                    if (!LookUpScope(variableName))
+                    {
+                        var parameter = new Symbol(variableName, variableType);
+                        currentScope.SymbolTable.Add(parameter);
+
+                        //needed for when function is called to check types of arguments
+                        parameters.Add(parameter);
+                    }
+                    else
+                    {
+                        throw new Exception("Variable already exists in local or parent scopes!");
+                    }
+                }
+                catch
+                {
+                    break;
+                }
 
                 //null for now, because the variable doesn't have a value at this stage.
                 //Might need other solution later. 
-                if (!LookUpScope(variableName))
-                {
-                    var parameter = new Symbol(variableName, variableType);
-                    currentScope.SymbolTable.Add(parameter);
 
-                    //needed for when function is called to check types of arguments
-                    parameters.Add(parameter);
-                }
-                else
-                {
-                    throw new Exception("Variable already exists in local or parent scopes!");
-                }
                 //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
                 if (context.GetChild(count2 + 1).GetText() == ")")
                 {
