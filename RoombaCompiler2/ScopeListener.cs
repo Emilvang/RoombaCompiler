@@ -30,14 +30,6 @@ namespace RoombaCompiler2
             var variableName = context.GetChild(1).GetText();
             var type = context.GetChild(0).GetText().ToLower();
 
-            for (int i = 4; i < context.ChildCount; i += 2)
-            {
-                var exprType = GetType(context.GetChild(i).GetText());
-                if (exprType != type || !(exprType == "int" && type == "float"))
-                {
-                    throw new Exception("Type mismatch");
-                }
-            }
             if (!LookUpScope(variableName))
             {
                 currentScope.SymbolTable.Add(new Symbol(variableName, type));
@@ -52,25 +44,8 @@ namespace RoombaCompiler2
 
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-            var lhs = GetType(context.GetChild(0).GetText());
-            string rhs;
-            int ii = context.GetChild(2).ChildCount;
-            var vvv = context.GetChild(2);
-            if (context.GetChild(2).ChildCount > 1)
-            {
-                for (int i = 0; i < context.GetChild(2).ChildCount; i += 2)
-                {
-                    rhs = context.GetChild(2).GetChild(i).GetText();
-                    if (lhs != rhs && !(lhs == "float" && rhs == "int"))
-                        throw new Exception("Type mismatch");
-                }
-            }
-            else
-            {
-                rhs = GetType(context.GetChild(2).GetText());
-                if (lhs != rhs && !(lhs == "float" && rhs == "int"))
-                    throw new Exception("Type mismatch");
-            }
+            if (!LookUpScope(context.GetChild(0).GetText()))
+                throw new Exception("Variable " + context.GetChild(0).GetText() + " is out of scope or not found!");
             base.EnterVar_stmt(context);
 
         }

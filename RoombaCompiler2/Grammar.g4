@@ -84,15 +84,15 @@ grammar Grammar;
     	;
 
  arithmetic_expr
-	    : (IDENTIFIER | FLOAT | INT) (op = (MUL | DIV) (IDENTIFIER | FLOAT | INT))+
-    	| (IDENTIFIER | FLOAT | INT) (op = (ADD | SUB) (IDENTIFIER | FLOAT | INT))+
+	    : (var_expr | func_expr | num_expr) (op = (MUL | DIV) (var_expr | func_expr | num_expr))+
+    	| (var_expr | func_expr | num_expr) (op = (ADD | SUB) (var_expr | func_expr | num_expr))+
 		;
  	
  logic_expr
 	: '(' logic_expr ')'
-   	| BOOL
-   	| expr  op=(LT | LTEQ | GT | GTEQ) expr (op=(AND | OR) logic_expr)*
-	| expr  op=(EQ | NEQ ) expr (op=(AND | OR) logic_expr)*
+   	| BOOL ((AND | OR) logic_expr)*
+   	| expr  (LT | LTEQ | GT | GTEQ) expr 
+	| expr  (EQ | NEQ ) expr 
    	;
 
  return_stmt
