@@ -86,11 +86,7 @@ namespace RoombaCompiler2
         }
 
 
-        public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
-        {
-            Console.WriteLine("ARITH"  + context.GetText());
-            base.EnterArithmetic_expr(context);
-        }
+        
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
             if (!LookUpScope(context.GetChild(0).GetText()))
@@ -162,7 +158,7 @@ namespace RoombaCompiler2
         {
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
-            Console.WriteLine(context.GetChild(3).GetText());
+            //Console.WriteLine(context.GetChild(3).GetText());
 
             if (!LookUpScope(variableName))
             {
