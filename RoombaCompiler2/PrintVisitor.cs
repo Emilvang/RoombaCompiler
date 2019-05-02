@@ -72,16 +72,7 @@ namespace RoombaCompiler2
         }
         public override bool VisitStmts([NotNull] GrammarParser.StmtsContext context)
         {
-            //Not sure how to use these nodes..
-            Node node = new Node();            
-
-            /*foreach (var child in context.children)
-            {
-                Node nodeChild = new Node();
-                node.children.Add(nodeChild);
-            }*/
-
-
+            
             Console.WriteLine("Statements");         
 
 
@@ -368,10 +359,10 @@ namespace RoombaCompiler2
                 {
                     try
                     {
-                        if (sourceString.Contains(variable.Name.ToString()))
+                        if (sourceString.Contains(variable.Key.ToString()))
                         {
-                            sourceString = sourceString.Replace(variable.Name.ToString(), variable.Name.ToString());
-                            Console.WriteLine($"Replaced {variable.Name.ToString()} with {variable.Name.ToString()}");
+                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Key.ToString());
+                            Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Key.ToString()}");
                         }
 
                     }
@@ -391,9 +382,9 @@ namespace RoombaCompiler2
             {
                 foreach(var pair in Scope.SymbolTable)
                 {
-                    if (pair.Name == expression)
+                    if (pair.Key == expression)
                     {
-                        return pair.Name;
+                        return pair.Value;
                     }
                 }
             }
