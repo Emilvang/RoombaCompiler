@@ -7,76 +7,37 @@ using Antlr4.Runtime.Misc;
 
 namespace RoombaCompiler2
 {
-        
+
 
     public class ScopeListener : GrammarBaseListener
     {
         // Variables outside program are not registered.
         ScopeNode currentScope;
         public List<ScopeNode> Scopes = new List<ScopeNode>();
-        
+
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             ScopeNode GlobalScope = new ScopeNode();
-            
+
             Scopes.Add(GlobalScope);
             currentScope = GlobalScope;
-            
+
             base.EnterProgram(context);
         }
-
-        public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
+        public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
         {
-            var variableName = context.GetChild(1).GetText();
-            var type = context.GetChild(0).GetText().ToLower();
-
-            for (int i = 4; i < context.ChildCount; i += 2)
-            {
-                var exprType = GetType(context.GetChild(i).GetText());
-                if (exprType != type || !(exprType == "int" && type == "float"))
-                {
-                    throw new Exception("Type mismatch");
-                }
-            }
-            if (!LookUpScope(variableName))
-            {
-                currentScope.SymbolTable.Add(new Symbol(variableName, type));
-            }
-            else
-            {
-                throw new Exception("Variable already exists in local or parent scopes!");
-            }
-
-            base.EnterVar_decl(context);
-        }
-
-        public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
-        {
-            var lhs = GetType(context.GetChild(0).GetText());
-            string rhs;
-            int ii = context.GetChild(2).ChildCount;
-            var vvv = context.GetChild(2);
-            if (context.GetChild(2).ChildCount > 1)
-            {
-                for (int i = 0; i < context.GetChild(2).ChildCount; i += 2)
-                {
-                    rhs = context.GetChild(2).GetChild(i).GetText();
-                    if (lhs != rhs && !(lhs == "float" && rhs == "int"))
-                        throw new Exception("Type mismatch");
-                }
-            }
-            else
-            {
-                rhs = GetType(context.GetChild(2).GetText());
-                if (lhs != rhs && !(lhs == "float" && rhs == "int"))
-                    throw new Exception("Type mismatch");
-            }
-            base.EnterVar_stmt(context);
-
+            base.ExitProgram(context);
         }
 
         public override void EnterNum_expr([NotNull] GrammarParser.Num_exprContext context)
-        {      
+        {
+            if (context.ChildCount == 1)
+            {
+                if (!(int.TryParse(context.GetChild(0).GetText(), out var result)))
+                {
+                    LookUpScope(context.GetChild(0).GetText());
+                }
+            }
 
             base.EnterNum_expr(context);
         }
@@ -100,6 +61,11 @@ namespace RoombaCompiler2
             LocalScope.Parent = currentScope;
             currentScope = LocalScope;
 
+
+            if (context.GetChild(0).GetText() == "for")
+            {
+                currentScope.SymbolTable.Add(context.GetChild(1).GetText(), context.GetChild(3).GetText());
+            }
 
 
             base.EnterIter_stmt(context);
@@ -126,19 +92,16 @@ namespace RoombaCompiler2
 
         //Should it be Func_expr or Func_stmt?
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {   
-            
+        {
             base.EnterFunc_expr(context);
         }
         public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {            
+        {
             base.ExitFunc_expr(context);
         }
         //Needs variable dec. for parametres
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
-            var funcName = context.GetChild(1).GetText();
-            var funcType = context.GetChild(0).GetText();
             ScopeNode LocalScope = new ScopeNode();
             Scopes.Add(LocalScope);
             LocalScope.Parent = currentScope;
@@ -149,47 +112,27 @@ namespace RoombaCompiler2
             int count2 = 3;
             //Probably needs an escape or exception thrown somehow if the programmer makes an error. What happens if the programmer forgets a comma?
             //Cant handle no arguments.
-            var parameters = new List<Symbol>();
             while (true)
             {
-                try
-                {
-                    var variableName = context.GetChild(count2).GetChild(1).GetText();
-                    var variableType = context.GetChild(count2 - 1).GetText();
+                var variableName = context.GetChild(count2).GetChild(1).GetText();
 
-                    if (!LookUpScope(variableName))
-                    {
-                        var parameter = new Symbol(variableName, variableType);
-                        //currentScope.SymbolTable.Add(parameter);
-
-                        //needed for when function is called to check types of arguments
-                        parameters.Add(parameter);
-                    }
-                    else
-                    {
-                        throw new Exception("Variable already exists in local or parent scopes!");
-                    }
-                }
-                catch
-                {
-                    break;
-                }
 
                 //null for now, because the variable doesn't have a value at this stage.
                 //Might need other solution later. 
-
-                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
-                if (context.GetChild(count2 + 1).GetText() == ")")
+                if (!LookUpScope(variableName))
                 {
-                    //adds function to parent symbol table
-                    var funcSymbol = new FunctionSymbol(funcName, funcType, parameters);
-                   // currentScope.Parent.SymbolTable.Add(funcSymbol);
-                    break;
+                    currentScope.SymbolTable.Add(variableName, null);
                 }
+                else
+                {
+                    throw new Exception("Variable already exists in local or parent scopes!");
+                }
+                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
+                if (context.GetChild(count2 + 1).GetText() == ")") break;
 
                 else count2 += 2;
             }
-                       
+
 
 
             base.EnterFunc_stmt(context);
@@ -201,28 +144,22 @@ namespace RoombaCompiler2
             base.ExitFunc_stmt(context);
         }
 
-        public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
+        public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-            //Console.WriteLine("arith");
-            base.EnterArithmetic_expr(context);
-        }
-        private string LookUpVarType (string expression)
-        {
-            ScopeNode Scope = currentScope;
+            var variableName = context.GetChild(1).GetText();
+            var expression = context.GetChild(3).GetText();
+            Console.WriteLine(context.GetChild(3).GetText());
 
-            while (Scope != null)
+            if (!LookUpScope(variableName))
             {
-                if (Scope.SymbolTable.Any(x => x.Name == expression))
-                {
-                    return Scope.SymbolTable.FirstOrDefault(x => x.Name == expression).Type;
-                }
-                else
-                {
-                    Scope = Scope.Parent;
-                }
+                currentScope.SymbolTable.Add(variableName, expression);
+            }
+            else
+            {
+                throw new Exception("Variable already exists in local or parent scopes!");
             }
 
-            throw new Exception("Variable " + expression + " is out of scope or not declared");
+            base.EnterVar_decl(context);
         }
 
         private bool LookUpScope(string expression)
@@ -231,7 +168,7 @@ namespace RoombaCompiler2
 
             while (Scope != null)
             {
-                if (Scope.SymbolTable.Any(x => x.Name == expression))
+                if (Scope.SymbolTable.ContainsKey(expression))
                 {
                     return true;
                 }
@@ -240,55 +177,11 @@ namespace RoombaCompiler2
                     Scope = Scope.Parent;
                 }
             }
+
             return false;
         }
 
-        private string GetType(string expression)
-        {
-            var expressions = SplitExpression(expression);
-            
-            if(expressions.Length > 1)
-            {
-                int bools = 0;
-                int floats = 0;
-                int ints = 0;
-                foreach (var element in expressions)
-                {
-                    Console.WriteLine(element);
-                    if (GetType(element) == "int")
-                        ints++;
-                    else if (GetType(element) == "float")
-                        floats++;
-                    else if (GetType(element) == "bool")
-                        bools++;
-                    Console.WriteLine(bools + " " + floats + " " + ints);
-                    if (bools == 0 && ints >= 0 && floats > 0)
-                        return "float";
-                    else if (ints == expressions.Length)
-                        return "int";
-                    else if (bools == expressions.Length)
-                        return "bool";
-                }
-                throw new Exception("Type mismatch on variable " + expression);
-            }
-            else
-            {
-                if (int.TryParse(expression, out var result))
-                    return "int";
-                else if (float.TryParse(expression, out var result2))
-                    return "float";
-                else if (bool.TryParse(expression, out var result3))
-                    return "bool";
-                else
-                    return LookUpVarType(expression);
-            }
-        }
 
-        private string[] SplitExpression(string expression)
-        {
-            string[] delimiters = { "*", "+", "/", "-", "<=", ">=", "<", ">", "!=", "==" };
-            return expression.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        }
 
     }
 }

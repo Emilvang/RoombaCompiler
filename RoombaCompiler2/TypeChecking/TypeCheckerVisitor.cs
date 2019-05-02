@@ -80,9 +80,9 @@ namespace RoombaCompiler2.TypeChecking
                 //Could add a try instead of checking each variable for more efficiency.
                 foreach (var pair in Scope.SymbolTable)
                 {
-                    if (pair.Name == expression)
+                    if (pair.Key == expression)
                     {
-                        return pair.Name;
+                        return pair.Value;
                     }
                 }
             }
@@ -98,10 +98,10 @@ namespace RoombaCompiler2.TypeChecking
                 {
                     try
                     {
-                        if (sourceString.Contains(variable.Name.ToString()))
+                        if (sourceString.Contains(variable.Key.ToString()))
                         {
-                            sourceString = sourceString.Replace(variable.Name.ToString(), variable.Name.ToString());
-                            Console.WriteLine($"Replaced {variable.Name.ToString()} with {variable.Name.ToString()}");
+                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Key.ToString());
+                            Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Key.ToString()}");
                         }
 
                     }
