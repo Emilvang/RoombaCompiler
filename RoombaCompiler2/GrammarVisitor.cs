@@ -50,12 +50,6 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStmt([NotNull] GrammarParser.StmtContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.var_decl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -134,17 +128,17 @@ public interface IGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNum_expr([NotNull] GrammarParser.Num_exprContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.logic_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLogic_expr([NotNull] GrammarParser.Logic_exprContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GrammarParser.return_stmt"/>.
 	/// </summary>

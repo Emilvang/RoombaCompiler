@@ -71,18 +71,6 @@ public partial class GrammarBaseListener : IGrammarListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStmt([NotNull] GrammarParser.StmtContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVar_stmt([NotNull] GrammarParser.Var_stmtContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.var_decl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -239,18 +227,6 @@ public partial class GrammarBaseListener : IGrammarListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitNum_expr([NotNull] GrammarParser.Num_exprContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.logic_expr"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -262,6 +238,18 @@ public partial class GrammarBaseListener : IGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLogic_expr([NotNull] GrammarParser.Logic_exprContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitVar_stmt([NotNull] GrammarParser.Var_stmtContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.return_stmt"/>.
 	/// <para>The default implementation does nothing.</para>

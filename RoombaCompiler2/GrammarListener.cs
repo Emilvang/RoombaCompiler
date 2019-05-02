@@ -61,16 +61,6 @@ public interface IGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStmt([NotNull] GrammarParser.StmtContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.var_decl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -201,16 +191,6 @@ public interface IGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNum_expr([NotNull] GrammarParser.Num_exprContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GrammarParser.arithmetic_expr"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.logic_expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -220,6 +200,16 @@ public interface IGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitLogic_expr([NotNull] GrammarParser.Logic_exprContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GrammarParser.var_stmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitVar_stmt([NotNull] GrammarParser.Var_stmtContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GrammarParser.return_stmt"/>.
 	/// </summary>

@@ -84,6 +84,20 @@ namespace RoombaCompiler2
             currentScope = LocalScope;
             base.EnterCond_stmt(context);
         }
+
+
+        public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
+        {
+            Console.WriteLine("ARITH"  + context.GetText());
+            base.EnterArithmetic_expr(context);
+        }
+        public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            if (!LookUpScope(context.GetChild(0).GetText()))
+                throw new Exception("Cant find variable " + context.GetChild(0).GetText());
+            base.EnterVar_stmt(context);
+        }
+
         public override void ExitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
             currentScope = currentScope.Parent;

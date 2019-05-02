@@ -16,11 +16,6 @@ grammar Grammar;
    	| print
    	;
  
- var_stmt
-   	:  IDENTIFIER '=' (expr | logic_expr)
-   	|  IDENTIFIER '[' expr ']' '=' (expr | logic_expr)
-	|  IDENTIFIER ADDARRAY (expr | logic_expr)
-   	;
 
  var_decl
 	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' (expr | logic_expr)
@@ -70,7 +65,7 @@ grammar Grammar;
 		| var_expr
     	| num_expr
 		| func_expr
-		| arithmetic_expr
+		| logic_expr
     	;
  
  var_expr
@@ -79,20 +74,33 @@ grammar Grammar;
     	;
  
  num_expr
-    	: INT
+    	: num_expr op = (MUL | DIV) num_expr
+		| num_expr op = (ADD | SUB) num_expr
+		|var_expr
+		|func_expr
+		|INT
     	| FLOAT
+		| 
     	;
 
- arithmetic_expr
-	    : (var_expr | func_expr | num_expr) (op = (MUL | DIV) (var_expr | func_expr | num_expr))+
-    	| (var_expr | func_expr | num_expr) (op = (ADD | SUB) (var_expr | func_expr | num_expr))+
-		;
+ //arithmetic_expr
+	/*    : '(' arithmetic_expr ')'
+		| (var_expr | func_expr | num_expr) op = (MUL | DIV) (var_expr | func_expr | num_expr)
+		| (var_expr | func_expr | num_expr) op = (ADD | SUB) (var_expr | func_expr | num_expr)
+		;*/
  	
  logic_expr
 	: '(' logic_expr ')'
-   	| BOOL ((AND | OR) logic_expr)*
-   	| expr  (LT | LTEQ | GT | GTEQ) expr 
-	| expr  (EQ | NEQ ) expr 
+   	| (BOOL | var_expr | func_expr)
+	| logic_expr (AND | OR) logic_expr
+   	| (var_expr | func_expr | num_expr )  (LT | LTEQ | GT | GTEQ) (var_expr | func_expr | num_expr)
+	| (var_expr | func_expr | num_expr)  (EQ | NEQ ) (var_expr | func_expr | num_expr)
+   	;
+
+  var_stmt
+   	:  IDENTIFIER '=' (expr | logic_expr)
+   	|  IDENTIFIER '[' expr ']' '=' (expr | logic_expr)
+	|  IDENTIFIER ADDARRAY (expr | logic_expr)
    	;
 
  return_stmt
