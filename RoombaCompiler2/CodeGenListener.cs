@@ -16,8 +16,6 @@ using Antlr4.Runtime.Misc;
  */
 
 
-
-
 namespace RoombaCompiler2
 {
     class CodeGenListener : GrammarBaseListener
@@ -39,10 +37,18 @@ namespace RoombaCompiler2
         }
 
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
-        {
-            prefix += "\t";
-            GeneratedCode += "def " + context.GetChild(1) + "(";
+        {           
+            
+           CreateDefaultFunction(context);
+                
 
+            base.EnterFunc_stmt(context);
+        }
+        
+        private void CreateDefaultFunction(GrammarParser.Func_stmtContext context)
+        {
+            GeneratedCode += prefix + "def " + context.GetChild(1) + "(";
+            prefix += "\t";
             //3 because here the arguments begin.
             int count2 = 3;
             //Probably needs an escape or exception thrown somehow if the programmer makes an error. What happens if the programmer forgets a comma?
@@ -69,17 +75,9 @@ namespace RoombaCompiler2
                     GeneratedCode += $"):";
                     break;
                 }
-          
 
-
-                //Checking if the next child is ')', meaning it has reached the end of the arguments. Break if so, else continue.
-               
-
-                
             }
-            
 
-            base.EnterFunc_stmt(context);
         }
 
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)

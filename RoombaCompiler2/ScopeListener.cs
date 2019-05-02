@@ -160,7 +160,7 @@ namespace RoombaCompiler2
                     if (!LookUpScope(variableName))
                     {
                         var parameter = new Symbol(variableName, variableType);
-                        currentScope.SymbolTable.Add(parameter);
+                        //currentScope.SymbolTable.Add(parameter);
 
                         //needed for when function is called to check types of arguments
                         parameters.Add(parameter);
@@ -183,7 +183,7 @@ namespace RoombaCompiler2
                 {
                     //adds function to parent symbol table
                     var funcSymbol = new FunctionSymbol(funcName, funcType, parameters);
-                    currentScope.Parent.SymbolTable.Add(funcSymbol);
+                   // currentScope.Parent.SymbolTable.Add(funcSymbol);
                     break;
                 }
 
@@ -203,7 +203,7 @@ namespace RoombaCompiler2
 
         public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
         {
-            Console.WriteLine("arith");
+            //Console.WriteLine("arith");
             base.EnterArithmetic_expr(context);
         }
         private string LookUpVarType (string expression)

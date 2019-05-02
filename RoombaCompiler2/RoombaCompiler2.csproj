@@ -64,6 +64,7 @@
     <Compile Include="ScopeNode.cs" />
     <Compile Include="TypeChecking\EExpressionType.cs" />
     <Compile Include="TypeChecking\TypeCheckerVisitor.cs" />
+    <Compile Include="TypeListenerEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

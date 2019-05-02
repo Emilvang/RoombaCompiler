@@ -37,6 +37,12 @@ namespace RoombaCompiler2
 
             MainScopeClass.Scopes = listener.Scopes;
 
+
+            var TypeListener = new TypeListenerEx();
+
+            ParseTreeWalker.Walk(TypeListener, tree);
+
+
             
             /*
             var visitor = new PrintVisitor();
