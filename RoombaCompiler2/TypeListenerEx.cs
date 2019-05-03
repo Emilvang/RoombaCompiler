@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
+using System.Data;
 
 namespace RoombaCompiler2
 {
@@ -11,12 +12,7 @@ namespace RoombaCompiler2
     {
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
-        {
-
-            foreach(var child in context.children)
-            {
-                Console.WriteLine(child.GetText());
-            }
+        {            
 
             string variableType = context.GetChild(0).GetText();
 
@@ -89,22 +85,64 @@ namespace RoombaCompiler2
                              
             }
         }
-
+        //Only works with True and False
         private void BoolHandler(string expression)
         {
-            //No clue yo
+            while(SearchAndReplace(expression).Item2)
+            {
+                expression = SearchAndReplace(expression).Item1;
+            }
+
+            DataTable dt = new DataTable();
+
+            try
+            {
+                dt.Compute(expression, "");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Cant compute {0} as boolean!", expression);
+            }
+            
+           
+            
         }
-
-
-
 
         private string[] SplitExpression(string expression)
         {
-            string[] delimiters = { "*", "+", "/", "-" };
+            string[] delimiters = { "*", "+", "/", "-"};
             return expression.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         }
+        private Tuple<string, bool> SearchAndReplace(string sourceString)
+        {
+            bool ReplacedValue = false;
 
 
+
+
+
+            foreach (var Scope in MainScopeClass.Scopes)
+            {
+                foreach (var variable in Scope.SymbolTable)
+                {
+                    try
+                    {
+                        if (sourceString.Contains(variable.Key.ToString()))
+                        {
+                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Key.ToString());
+                            ReplacedValue = true;
+                            //Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Key.ToString()}");
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
+            return new Tuple<string, bool>(sourceString, ReplacedValue);
+        }
 
 
 
