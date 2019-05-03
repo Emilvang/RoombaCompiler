@@ -10,29 +10,29 @@ namespace RoombaCompiler2
     public class TypeListenerEx : GrammarBaseListener
     {        
 
-        public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
-        {
+        //public override void EnterArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
+        //{
 
-            string[] expressions = SplitExpression(context.GetText());
+        //    string[] expressions = SplitExpression(context.GetText());
 
-            foreach (var expression in expressions)
-            {
-                if(int.TryParse(expression, out var result))
-                {
+        //    foreach (var expression in expressions)
+        //    {
+        //        if(int.TryParse(expression, out var result))
+        //        {
 
-                }
+        //        }
 
 
-                Console.WriteLine(expression);
-            }
+        //        Console.WriteLine(expression);
+        //    }
 
 
 
 
 
             
-            base.EnterArithmetic_expr(context);
-        }
+        //    base.EnterArithmetic_expr(context);
+        //}
 
 
         private string[] SplitExpression(string expression)
