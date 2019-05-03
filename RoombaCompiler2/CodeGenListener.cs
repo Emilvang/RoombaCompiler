@@ -36,6 +36,13 @@ namespace RoombaCompiler2
             base.EnterProgram(context);
         }
 
+        public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
+        {
+            //Necessary? Not sure
+            GeneratedCode += prefix + "self.close()";
+            base.ExitProgram(context);
+        }
+
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {           
             
@@ -87,10 +94,124 @@ namespace RoombaCompiler2
             base.ExitFunc_stmt(context);
         }
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {            
-            GeneratedCode += prefix + context.GetText();
+        {
+            
+            switch (context.GetChild(0).GetText())
+            {
+                
+                case "Drive":
+                //4 = One argument for Drive.
+                    if (context.ChildCount == 4)
+                    {
+                        DriveOneArgument(context);
+                    }
+                //else: two arguments for Drive
+                    else
+                    {
+                        DriveTwoArguments(context);
+                    }
+                    break;
+                case "Turn":
+                    Turn(context);
+                    break;
+                case "CoverCircle":
+                    CoverCircle(context);
+                    break;
+                case "CoverRectangle":
+                    CoverRectangle(context);
+                    break;
+                case "Stop":
+                    Stop();
+                    break;
+                case "Dock":
+                    Dock();
+                    break;
+                default:
+                    GeneratedCode += prefix + context.GetText();
+                    break;
+            }            
             base.EnterFunc_expr(context);
         }
+        //Not sure if time.sleep needs to be added somehow? 
+        private void DriveOneArgument(GrammarParser.Func_exprContext context)
+        {
+            string speed = context.GetChild(2).GetText();
+            //Multiplied by 10 because we set it as cm/s, not mm/s. 
+            GeneratedCode += $"{prefix}self.drive_straight(({speed})*10)";
+
+        }
+        private void DriveTwoArguments(GrammarParser.Func_exprContext context)
+        {
+            string speed = context.GetChild(2).GetText();
+            string distance = context.GetChild(4).GetText();
+            //Multiplied by 10 because we set it as cm/s, not mm/s. 
+            GeneratedCode += $"{prefix}self.drive_distance({distance}, ({speed})*10)";
+        }
+        private void Turn(GrammarParser.Func_exprContext context)
+        {           
+            string degrees = context.GetChild(2).GetText();            
+            //Not sure what 0 means? 
+            //Should it be turn while driving? Right now it's stationary, I think.
+            GeneratedCode += $"{prefix}self.drive_turn({degrees},0)";
+
+        }
+        private void CoverCircle(GrammarParser.Func_exprContext context)
+        {
+
+        }
+        private void CoverRectangle(GrammarParser.Func_exprContext context)
+        {           
+
+            //Not sure if it works?
+            //Need to set up simulator
+
+            //Clean one line up to h. 
+            //Turn 90 degrees.
+            //Drive 5 cm to the right?
+            //Turn 90 degrees
+            //Clean one line down to h.
+            //Turn -90 degrees
+            //Drive 5 cm to the right
+            //Turn -90 degrees
+            //Repeat until w has been reached, somehow.
+
+            string coveredWidth = "0";
+            string width = context.GetChild(2).GetText();
+
+            string height = context.GetChild(4).GetText();
+            string turnDistance = "5";
+
+            string stringToAdd = prefix;
+            stringToAdd += $"coveredWidth = {coveredWidth}";
+            stringToAdd += $"{prefix}while coveredWidth <= {width}:";
+            prefix += "\t";
+            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
+            stringToAdd += $"{prefix}self.drive_stop()";
+            stringToAdd += $"{prefix}self.drive_turn(90,0)";
+            //Does it need pause here?
+            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
+            stringToAdd += $"{prefix}self.drive_turn(90,0)";
+            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
+            stringToAdd += $"{prefix}self.drive_stop()";
+            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
+            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
+            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
+            stringToAdd += $"{prefix}coveredWidth += 5";
+            GeneratedCode += stringToAdd;
+            prefix = RemovePrefix(prefix, "\t");
+
+        }
+        private void Dock()
+        {
+            //Couldn't find the necessary code from pycreate2. Just a guess
+            GeneratedCode += $"{prefix}self.dock()";
+        }
+        private void Stop()
+        {
+            GeneratedCode += $"{prefix}self.drive_stop()";
+        }
+        
+
 
         public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
@@ -218,6 +339,7 @@ namespace RoombaCompiler2
             return cleanPath;
 
         }
+        
 
     }
 }

@@ -84,14 +84,29 @@ namespace RoombaCompiler2
             currentScope = LocalScope;
             base.EnterCond_stmt(context);
         }
-
-
         
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-            if (!LookUpScope(context.GetChild(0).GetText()))
-                throw new Exception("Cant find variable " + context.GetChild(0).GetText());
+            var variableName = context.GetChild(0).GetText();
+            var expression = context.GetChild(2).GetText();            
+
+            if (!LookUpScope(variableName))
+            {
+                throw new Exception($"Cant find variable {variableName}");
+            }
+            else
+            {
+                UpdateVariable(variableName, expression);
+            }
+                
+           
             base.EnterVar_stmt(context);
+        }
+
+        public override void ExitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            //Do nothing
+            base.ExitVar_stmt(context);
         }
 
         public override void ExitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
@@ -191,6 +206,23 @@ namespace RoombaCompiler2
             return false;
         }
 
+        private void UpdateVariable(string variable, string expression)
+        {
+            ScopeNode Scope = currentScope;
+
+            while (Scope != null)
+            {
+                if (Scope.SymbolTable.ContainsKey(variable))
+                {
+                    Scope.SymbolTable[variable] = expression;
+                    break;
+                }
+                else
+                {
+                    Scope = Scope.Parent;
+                }
+            }
+        }
 
 
     }

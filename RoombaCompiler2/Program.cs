@@ -42,22 +42,6 @@ namespace RoombaCompiler2
 
             ParseTreeWalker.Walk(TypeListener, tree);
 
-
-            
-            /*
-            var visitor = new PrintVisitor();
-
-            
-            
-            visitor.VisitProgram(tree);
-            Console.WriteLine("Basic visitor done!");
-            
-            var typeVisitor = new TypeCheckerVisitor();
-
-            typeVisitor.VisitProgram(tree);
-            Console.WriteLine("Typechecker visitor done!");
-            */
-            
             Console.WriteLine("Checking scopes:");
 
             foreach (var Scope in listener.Scopes)
@@ -69,12 +53,13 @@ namespace RoombaCompiler2
                 }
 
             }
-
+            /* CODE GENERATION
             var codeGen = new CodeGenListener();
             ParseTreeWalker.Walk(codeGen, tree);
             
             System.IO.File.WriteAllText(@"pythonScript.txt", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
+            */
             
             Console.ReadLine();
         }
