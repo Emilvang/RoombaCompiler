@@ -1,12 +1,7 @@
 ﻿using Antlr4.Runtime;
-
 using Antlr4.Runtime.Tree;
-using RoombaCompiler2.TypeChecking;
+using RoombaCompiler2.SemanticAnalysis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoombaCompiler2
 {
@@ -28,12 +23,20 @@ namespace RoombaCompiler2
 
             var tree = parser.program();
 
+            var sl = new SymbolListener();
 
             var listener = new ScopeListener();
 
             var ParseTreeWalker = new ParseTreeWalker();
 
-            ParseTreeWalker.Walk(listener, tree);
+            ParseTreeWalker.Walk(sl, tree);
+
+            sl.SymbolTable.ResetTable();
+
+            var typeChecker = new TypeChecker(sl.SymbolTable);
+
+            typeChecker.Visit(tree);
+            //ParseTreeWalker.Walk(listener, tree);
 
             MainScopeClass.Scopes = listener.Scopes;
 

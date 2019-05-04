@@ -1,0 +1,16 @@
+﻿
+int r()
+{
+	bool r = True
+
+	bool n = True
+
+	return 1 + n
+}
+
+Program 
+{
+	int nestor = 5
+
+	int s = n + 3
+}
