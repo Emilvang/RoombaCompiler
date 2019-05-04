@@ -85,23 +85,29 @@ namespace RoombaCompiler2
                              
             }
         }
-        //Only works with True and False
+        //Works, but pretty ugly..An emergency solution, I guess.
         private void BoolHandler(string expression)
         {
-            while(SearchAndReplace(expression).Item2)
+
+            Tuple<string, bool> TuplePair = SearchAndReplace(expression);
+
+            
+
+            while(TuplePair.Item2)
             {
-                expression = SearchAndReplace(expression).Item1;
+                TuplePair = SearchAndReplace(TuplePair.Item1);                
+                
             }
 
             DataTable dt = new DataTable();
 
             try
             {
-                dt.Compute(expression, "");
+                Console.WriteLine("Boolean result: " + dt.Compute(TuplePair.Item1, "")); 
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Cant compute {0} as boolean!", expression);
+                Console.WriteLine("Cant compute {0} as boolean!", TuplePair.Item1);
             }
             
            
@@ -117,10 +123,35 @@ namespace RoombaCompiler2
         {
             bool ReplacedValue = false;
 
+            Dictionary<string, string> TranslateScope = new Dictionary<string, string>();
 
+            TranslateScope.Add("And", " AND ");
+            TranslateScope.Add("and", " AND ");
+            TranslateScope.Add("Or", " OR ");
+            TranslateScope.Add("or", " OR ");
+            TranslateScope.Add("==", "=");
+            TranslateScope.Add("!=", "<>");
 
+            //Has to replace certain elements for the compute function to work. 
+            foreach (var variable in TranslateScope)
+            {
+                try
+                {
+                    if (sourceString.Contains(variable.Key.ToString()))
+                    {
+                        sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
+                        ReplacedValue = true;
+                        //Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Key.ToString()}");
+                    }
 
+                }
+                catch (Exception)
+                {
 
+                }
+            }
+
+            //Replacing variables.
             foreach (var Scope in MainScopeClass.Scopes)
             {
                 foreach (var variable in Scope.SymbolTable)
@@ -129,10 +160,12 @@ namespace RoombaCompiler2
                     {
                         if (sourceString.Contains(variable.Key.ToString()))
                         {
-                            sourceString = sourceString.Replace(variable.Key.ToString(), variable.Key.ToString());
+                            //Not quite sure about this one..Seems to work though.
+                            sourceString = sourceString.Replace(variable.Key.ToString(), SearchAndReplace(variable.Value.ToString()).Item1);
                             ReplacedValue = true;
                             //Console.WriteLine($"Replaced {variable.Key.ToString()} with {variable.Key.ToString()}");
                         }
+                        
 
                     }
                     catch (Exception)
