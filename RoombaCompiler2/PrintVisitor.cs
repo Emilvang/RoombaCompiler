@@ -334,12 +334,6 @@ namespace RoombaCompiler2
             return base.VisitNum_expr(context);
         }
 
-        public override bool VisitArithmetic_expr([NotNull] GrammarParser.Arithmetic_exprContext context)
-        {
-            Console.WriteLine("ArithmeticExpr");
-            return base.VisitArithmetic_expr(context);
-        }
-
         private string removePrefix(string sourceString, string removeString)
         {
             int index = sourceString.IndexOf(removeString);
