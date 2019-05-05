@@ -56,10 +56,7 @@ namespace RoombaCompiler2
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
-            ScopeNode LocalScope = new ScopeNode();
-            Scopes.Add(LocalScope);
-            LocalScope.Parent = currentScope;
-            currentScope = LocalScope;
+            AddLocalScope();
 
 
             if (context.GetChild(0).GetText() == "for")
@@ -78,10 +75,7 @@ namespace RoombaCompiler2
 
         public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
-            ScopeNode LocalScope = new ScopeNode();
-            Scopes.Add(LocalScope);
-            LocalScope.Parent = currentScope;
-            currentScope = LocalScope;
+            AddLocalScope();
             base.EnterCond_stmt(context);
         }
         
@@ -127,10 +121,7 @@ namespace RoombaCompiler2
         //Needs variable dec. for parametres
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
-            ScopeNode LocalScope = new ScopeNode();
-            Scopes.Add(LocalScope);
-            LocalScope.Parent = currentScope;
-            currentScope = LocalScope;
+            AddLocalScope();
 
 
             //3 because here the arguments begin.
@@ -222,6 +213,14 @@ namespace RoombaCompiler2
                     Scope = Scope.Parent;
                 }
             }
+        }
+
+        private void AddLocalScope()
+        {
+            ScopeNode LocalScope = new ScopeNode();
+            Scopes.Add(LocalScope);
+            LocalScope.Parent = currentScope;
+            currentScope = LocalScope;
         }
 
 

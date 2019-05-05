@@ -179,7 +179,8 @@ namespace RoombaCompiler2
             string width = context.GetChild(2).GetText();
 
             string height = context.GetChild(4).GetText();
-            string turnDistance = "5";
+            //Does it accept floats? We need to test this.
+            string turnDistance = "0.05";
 
             string stringToAdd = prefix;
             stringToAdd += $"coveredWidth = {coveredWidth}";
