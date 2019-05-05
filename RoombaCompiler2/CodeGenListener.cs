@@ -46,12 +46,12 @@ namespace RoombaCompiler2
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {           
             
-           CreateDefaultFunction(context);
-                
+           CreateDefaultFunction(context);                
 
             base.EnterFunc_stmt(context);
         }
         
+        //Probably needs an update with added parameter to the grammar.
         private void CreateDefaultFunction(GrammarParser.Func_stmtContext context)
         {
             GeneratedCode += prefix + "def " + context.GetChild(1) + "(";
@@ -161,10 +161,11 @@ namespace RoombaCompiler2
         }
         private void CoverRectangle(GrammarParser.Func_exprContext context)
         {           
-
-            //Not sure if it works?
-            //Need to set up simulator
-
+            /*
+            Not sure if it works?
+            Need to set up simulator
+            Base idea:
+            */
             //Clean one line up to h. 
             //Turn 90 degrees.
             //Drive 5 cm to the right?

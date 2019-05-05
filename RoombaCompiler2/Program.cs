@@ -52,14 +52,13 @@ namespace RoombaCompiler2
                     Console.WriteLine(element.Key + " " + element.Value);
                 }
 
-            }
-            /* CODE GENERATION
+            }            
             var codeGen = new CodeGenListener();
             ParseTreeWalker.Walk(codeGen, tree);
             
             System.IO.File.WriteAllText(@"pythonScript.txt", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
-            */
+            
             
             Console.ReadLine();
         }
