@@ -16,6 +16,21 @@ grammar Grammar;
    	| print
    	;
  
+      /* Scopes to check:
+     * var decl DONE
+     * func expr
+     * var expr
+     * 
+     * 
+     * Variables to add to scopes:
+     * for DONE
+     * parameters DONE
+     * func_stmt DONE
+     * 
+     * Add scopes:
+     * Iter stmt DONE
+     * if  / else /elseif
+     */
 
  var_decl
 	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' (expr | logic_expr)
@@ -76,9 +91,9 @@ grammar Grammar;
  num_expr
     	: num_expr op = (MUL | DIV) num_expr
 		| num_expr op = (ADD | SUB) num_expr
-		|var_expr
-		|func_expr
-		|INT
+		| var_expr
+		| func_expr
+		| INT
     	| FLOAT
 		| 
     	;
