@@ -5,12 +5,27 @@ int r()
 
 	bool n = True
 
-	return 1 + n
+	return 1
 }
 
 Program 
 {
-	int nestor = 5
+	int n = 5000
 
-	int s = n + 3
+	if True
+	{
+		bool r = True
+	}
+	else if False
+	{
+		bool r = False
+	}
+	else 
+	{
+		bool r = True
+	}
+
+	int r = 8
+
+	int s = n + 3 + r
 }

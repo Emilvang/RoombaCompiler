@@ -10,8 +10,8 @@ namespace RoombaCompiler2.SemanticAnalysis
     public class SymbolListener : GrammarBaseListener
     {
         public SymbolTable SymbolTable = new SymbolTable();
-        public IDictionary<string, string> DeclaredMethods = new Dictionary<string, string>();
-        public ICollection<string> Errors = new List<string>();
+        public ICollection<string> Errors = new HashSet<string>();
+        private IDictionary<string, string> DeclaredMethods = new Dictionary<string, string>();
 
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context) => EnterScopeAndSetType(EScopeType.Program);
 

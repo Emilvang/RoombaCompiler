@@ -14,18 +14,18 @@ namespace RoombaCompiler2.SemanticAnalysis.Utils
 
         public static bool IsBoolLiteral(this string text) => text == "True" || text == "False";
 
-        public static EVariableType GetVariableType(this string text)
+        public static EValueType GetVariableType(this string text)
         {
             switch (text)
             {
                 case "int":
-                    return EVariableType.Integer;
+                    return EValueType.Integer;
                 case "bool":
-                    return EVariableType.Boolean;
+                    return EValueType.Boolean;
                 case "float":
-                    return EVariableType.Float;
+                    return EValueType.Float;
                 case "void":
-                    return EVariableType.Void;          
+                    return EValueType.Void;          
                 default:
                     throw new NotImplementedException();
             }

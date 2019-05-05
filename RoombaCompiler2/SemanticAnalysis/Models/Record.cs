@@ -3,9 +3,9 @@
     public class Record
     {
         protected string _id;
-        protected EVariableType _type;
+        protected EValueType _type;
 
-        public Record(string id, EVariableType type)
+        public Record(string id, EValueType type)
         {
             _id = id;
             _type = type;
@@ -13,7 +13,7 @@
 
         public string Id => _id;
 
-        public EVariableType Type => _type;
+        public EValueType Type => _type;
 
         public override string ToString() => "Record: " + _id + " : " + _type;
     }
