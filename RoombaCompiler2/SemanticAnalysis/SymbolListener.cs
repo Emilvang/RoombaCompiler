@@ -13,7 +13,12 @@ namespace RoombaCompiler2.SemanticAnalysis
         public ICollection<string> Errors = new HashSet<string>();
         public IDictionary<string, MethodRecord> DeclaredMethods = new Dictionary<string, MethodRecord>();
 
-        public override void EnterProgram([NotNull] GrammarParser.ProgramContext context) => EnterScopeAndSetType(EScopeType.Program);
+
+        public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
+        {
+            EnterScopeAndSetType(EScopeType.Program);
+            PopulateWithBuiltInFunctions();
+        }
 
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context) => SymbolTable.ExitScope();
 
@@ -183,6 +188,7 @@ namespace RoombaCompiler2.SemanticAnalysis
         private void PopulateWithBuiltInFunctions()
         {
             //Solution to built in procedures
+            //Needs to be called somewhere.
 
             //Turn
             var turnDictionary = new Dictionary<string, EValueType>();
