@@ -54,13 +54,21 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override EValueType? VisitReturn_stmt([NotNull] GrammarParser.Return_stmtContext context) => base.Visit(context.expr());
 
-        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
+        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
+        {
+            if (context.WHILE() != null)
+            {
+                base.Visit(context.logic_expr());
+            }
 
-        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
+            return VisitContextAndOpenScope(context.stmts());
+        }
+
+        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitConditionalWithBodyAndScope(context.stmts(), context.logic_expr());
+
+        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitConditionalWithBodyAndScope(context.stmts(), context.logic_expr());
 
         public override EValueType? VisitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => VisitContextAndOpenScope(context.stmts());
-
-        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => VisitContextAndOpenScope(context.stmts());
 
         public override EValueType? VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
@@ -134,7 +142,11 @@ namespace RoombaCompiler2.SemanticAnalysis
                 }
                 else if (valueType == typeof(GrammarParser.Func_exprContext))
                 {
-                    base.Visit(context.GetChild(0));
+                    var methodType = base.Visit(context.GetChild(0));
+                    if (methodType != EValueType.Boolean)
+                    {
+                        Errors.Add($"Cannot use method of type: {methodType} in a logical expression");
+                    }
                 }
                 else if (!value.IsBoolLiteral())
                 {
@@ -238,7 +250,7 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         private EValueType? GetVariableTypeFromSymbolTable(string variableName) => _symbolTable.Lookup(variableName)?.Type;
 
-        private EValueType? VisitConditional(ParserRuleContext body, GrammarParser.Logic_exprContext condition)
+        private EValueType? VisitConditionalWithBodyAndScope(ParserRuleContext body, GrammarParser.Logic_exprContext condition)
         {
             base.Visit(condition);
 
