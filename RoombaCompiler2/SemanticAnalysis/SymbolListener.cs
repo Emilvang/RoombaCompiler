@@ -180,5 +180,60 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
         }
 
+        private void PopulateWithBuiltInFunctions()
+        {
+            //Solution to built in procedures
+
+            //Turn
+            var turnDictionary = new Dictionary<string, EValueType>();
+            turnDictionary.Add("degrees", EValueType.Integer);
+
+            MethodRecord turnRecord = new MethodRecord("Turn", EValueType.Void, turnDictionary);
+            DeclaredMethods.Add("Turn", turnRecord);
+
+            //Stop
+            var stopDictionary = new Dictionary<string, EValueType>();
+            MethodRecord stopRecord = new MethodRecord("Stop", EValueType.Void, stopDictionary);
+            DeclaredMethods.Add("Stop", stopRecord);
+
+            //Pause
+            var pauseDictionary = new Dictionary<string, EValueType>();
+            pauseDictionary.Add("MilliSeconds", EValueType.Integer);
+            MethodRecord pauseRecord = new MethodRecord("Pause", EValueType.Void, pauseDictionary);
+            DeclaredMethods.Add("Pause", pauseRecord);
+
+            //DriveStraight //Rename in project instead of introducing function overloading
+            var driveStraightDictionary = new Dictionary<string, EValueType>();
+            driveStraightDictionary.Add("Speed", EValueType.Integer);
+            MethodRecord driveStraightRecord = new MethodRecord("DriveStraight", EValueType.Void, driveStraightDictionary);
+            DeclaredMethods.Add("DriveStraight", driveStraightRecord);
+
+            //Drive
+            var driveDictionary = new Dictionary<string, EValueType>();
+            driveDictionary.Add("Speed", EValueType.Integer);
+            driveDictionary.Add("Distance", EValueType.Integer);
+            MethodRecord driveRecord = new MethodRecord("Drive", EValueType.Void, driveDictionary);
+            DeclaredMethods.Add("Drive", driveRecord);
+
+            //CoverCircle
+            var coverCircleDictionary = new Dictionary<string, EValueType>();
+            coverCircleDictionary.Add("Radius", EValueType.Integer);
+            MethodRecord coverCircleRecord = new MethodRecord("CoverCircle", EValueType.Void, coverCircleDictionary);
+            DeclaredMethods.Add("CoverCircle", coverCircleRecord);
+
+            //CoverRectangle
+            var coverRectangleDictionary = new Dictionary<string, EValueType>();
+            coverRectangleDictionary.Add("Width", EValueType.Integer);
+            coverRectangleDictionary.Add("Height", EValueType.Integer);
+            MethodRecord coverRectangleRecord = new MethodRecord("CoverRectangle", EValueType.Void, coverRectangleDictionary);
+            DeclaredMethods.Add("CoverRectangle", coverRectangleRecord);
+
+            //Dock
+            var dockDictionary = new Dictionary<string, EValueType>();
+            MethodRecord dockRecord = new MethodRecord("Dock", EValueType.Void, dockDictionary);
+            DeclaredMethods.Add("Dock", dockRecord);
+
+        }
+
     }
 }

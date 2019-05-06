@@ -25,7 +25,7 @@ int ko(int ro, bool k)
 		k = False
 	}
 
-	return ro/ro + ro + kop();
+	return ro/ro + ro + kop()
 }
 
 
@@ -51,7 +51,7 @@ int r()
 	{
 	    int j = 10000
 		i = 10 + kop()
-		j += i
+		j = j + i
 	}
 
 	return 1

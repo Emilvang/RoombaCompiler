@@ -281,6 +281,18 @@ namespace RoombaCompiler2
             base.EnterVar_stmt(context);
         }
 
+        public override void EnterReturn_stmt([NotNull] GrammarParser.Return_stmtContext context)
+        {
+            //Made like this to get spaces in between different expressions and the return keyword.
+            string returnCode = "";
+            for (int i = 1; i < context.ChildCount; i++)
+            {
+                returnCode += " " + context.GetChild(i).GetText();
+            }
+            GeneratedCode += prefix + "return" + returnCode;
+            base.EnterReturn_stmt(context);
+        }
+
         public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
             //Do nothing?      
@@ -345,7 +357,7 @@ namespace RoombaCompiler2
         }
         private string SearchAndReplace(string sourceString)
         {
-
+            //Needs a fix for actual words including the phrases "And" "and" and so on..
             Dictionary<string, string> TranslateScope = new Dictionary<string, string>();
 
             TranslateScope.Add("And", " AND ");
