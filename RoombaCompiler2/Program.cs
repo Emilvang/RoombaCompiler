@@ -41,7 +41,7 @@ namespace RoombaCompiler2
 
             typeChecker.Visit(tree);
             Console.WriteLine("Printing type errors:");
-            typeChecker.PrintErrors();
+            //typeChecker.PrintErrors();
             //ParseTreeWalker.Walk(listener, tree);
             /*
             MainScopeClass.Scopes = listener.Scopes;

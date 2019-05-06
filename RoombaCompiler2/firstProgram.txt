@@ -22,7 +22,7 @@ int ko(int ro, bool k)
 {
 	if 5.01 + 5 > ro
 	{
-		k = 1
+		k = False
 	}
 
 	return ro/ro + ro + kop();
@@ -42,13 +42,16 @@ int r()
 	int s3 = 1
 	float ns = 5 + 4 + s3
 
-	while True 
+	while corect or kop()
 	{
 	
 	}
 
 	for i = 0 to 5
 	{
+	    int j = 10000
+		i = 10 + kop()
+		j += i
 	}
 
 	return 1
