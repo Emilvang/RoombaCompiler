@@ -57,7 +57,8 @@ grammar Grammar;
     	;
  
  print // for testing purposes
-    	: 'print' (expr | logic_expr)
+    	: 'print' expr
+		| 'print' PRINTMESSAGE
     	;
  
  expr
@@ -154,6 +155,7 @@ IDENTIFIER : CHARACTER+ (CHARACTER | DIGIT)*;
 INT : ('-')? DIGIT+;
 FLOAT : ('-')? DIGIT+ ('.' DIGIT+)?;
 COMMENT : '#' .*? '#' -> skip;
+PRINTMESSAGE : '"' .*? '"'; 
 WS
    	:  	(' ' | '\r' | '\t' | '\n' | COMMENT) -> channel(HIDDEN)
    	;
