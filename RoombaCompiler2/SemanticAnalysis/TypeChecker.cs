@@ -93,8 +93,12 @@ namespace RoombaCompiler2.SemanticAnalysis
                 var leftValueType = base.Visit(context.GetChild(0));
                 var rightValueType = base.Visit(context.GetChild(2));
 
-                // TODO: Allow mixing of ints and floats?
-                if (leftValueType != rightValueType)
+                if ((leftValueType == EValueType.Integer && rightValueType == EValueType.Float) || 
+                    (leftValueType == EValueType.Float && rightValueType == EValueType.Integer))
+                {
+                    return EValueType.Float; // If a Float is found in the expression the expression automatically becomes float expression
+                }
+                else if (leftValueType != rightValueType)
                 {
                     Errors.Add($"Found a type error. Cannot mix {leftValueType} and {rightValueType}");
                 }
@@ -145,7 +149,11 @@ namespace RoombaCompiler2.SemanticAnalysis
             var variableName = context.GetChild(1).GetText();
             var expressionType = base.Visit(context.GetChild(3));
 
-            if (declaredType != expressionType)
+            if (declaredType == EValueType.Float && expressionType == EValueType.Integer)
+            {
+                // No Errors skip it
+            }
+            else if (declaredType != expressionType)
             {
                 Errors.Add($"Expression does not match declared type in the declaration of variable: {variableName}");
             }
