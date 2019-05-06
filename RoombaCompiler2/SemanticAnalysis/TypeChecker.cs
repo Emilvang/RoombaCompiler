@@ -214,6 +214,29 @@ namespace RoombaCompiler2.SemanticAnalysis
             return method.ReturnType;
         }
 
+        public override EValueType? VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            var variableName = context.GetChild(0).GetText();
+
+            var declaredType = GetVariableTypeFromSymbolTable(variableName);
+
+            var actualType = base.Visit(context.GetChild(2));
+
+
+            if (declaredType == EValueType.Float && actualType == EValueType.Integer)
+            {
+                //Do nothing
+            }
+           else if (declaredType != actualType)
+            {
+                Errors.Add($"Error with variable name {variableName}: Declared type {declaredType} does not match actual type {actualType}");
+            }
+
+
+
+            return base.VisitVar_stmt(context);
+        }
+
         public override EValueType? VisitVar_expr([NotNull] GrammarParser.Var_exprContext context) => GetVariableTypeFromSymbolTable(context.GetChild(0).GetText());
 
         private EValueType? GetVariableTypeFromSymbolTable(string variableName) => _symbolTable.Lookup(variableName)?.Type;
@@ -227,6 +250,13 @@ namespace RoombaCompiler2.SemanticAnalysis
             _symbolTable.ExitScope();
 
             return result;
+        }
+        public void PrintErrors()
+        {
+            foreach (var Error in Errors)
+            {
+                System.Console.WriteLine(Error);
+            }
         }
     }
 }

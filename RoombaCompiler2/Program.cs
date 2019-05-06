@@ -33,45 +33,28 @@ namespace RoombaCompiler2
             ParseTreeWalker.Walk(sl, tree);
 
             sl.SymbolTable.ResetTable();
+            Console.WriteLine("Printing scope errors:");
+            sl.PrintErrors();
+
 
             var typeChecker = new TypeChecker(sl.SymbolTable, sl.DeclaredMethods.ToReadOnlyDictionary());
 
             typeChecker.Visit(tree);
+            Console.WriteLine("Printing type errors:");
+            typeChecker.PrintErrors();
             //ParseTreeWalker.Walk(listener, tree);
-
+            /*
             MainScopeClass.Scopes = listener.Scopes;
 
             var TypeListener = new TypeListenerEx();
 
             ParseTreeWalker.Walk(TypeListener, tree);
-
-
-            
-            /*
-            var visitor = new PrintVisitor();
-
-            
-            
-            visitor.VisitProgram(tree);
-            Console.WriteLine("Basic visitor done!");
-            
-            var typeVisitor = new TypeCheckerVisitor();
-
-            typeVisitor.VisitProgram(tree);
-            Console.WriteLine("Typechecker visitor done!");
             */
             
-            Console.WriteLine("Checking scopes:");
+            
 
-            foreach (var Scope in listener.Scopes)
-            {
-                Console.WriteLine("Scope start:");
-                foreach (var element in Scope.SymbolTable)
-                {
-                    Console.WriteLine(element.Key + " " + element.Value);
-                }
 
-            }
+            
 
             var codeGen = new CodeGenListener();
             ParseTreeWalker.Walk(codeGen, tree);
