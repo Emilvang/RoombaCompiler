@@ -49,7 +49,16 @@ namespace RoombaCompiler2.SemanticAnalysis
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context) => SymbolTable.ExitScope();
 
         // TODO: Check Parameters
-        public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => EnterScopeAndSetType(EScopeType.Loop);
+        public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
+        {
+            EnterScopeAndSetType(EScopeType.Loop);
+
+            if (context.FOR() != null)
+            {
+                var variableName = context.IDENTIFIER().GetText();
+                SymbolTable.Put(variableName, new Record(variableName, EValueType.Integer));
+            }
+        }
 
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => SymbolTable.ExitScope();
 

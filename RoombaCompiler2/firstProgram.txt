@@ -5,6 +5,16 @@ int r()
 
 	bool n = True
 
+	while True 
+	{
+	
+	}
+
+	for i = 0 to 5
+	{
+		int i = 10
+	}
+
 	return 1
 }
 
