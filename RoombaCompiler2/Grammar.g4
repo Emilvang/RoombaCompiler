@@ -18,8 +18,8 @@ grammar Grammar;
  
 
  var_decl
-	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' (expr | logic_expr)
-	 | (INTDECL | FLOATDECL | BOOLDECL) LISTDECL  IDENTIFIER '=' '[' ((expr | logic_expr) (',' (expr | logic_expr))*)? ']'
+	 : (INTDECL | FLOATDECL | BOOLDECL) IDENTIFIER '=' (expr)
+	 | (INTDECL | FLOATDECL | BOOLDECL) LISTDECL  IDENTIFIER '=' '[' (expr (',' expr)*)? ']'
 	 ;
  
  cond_stmt
@@ -77,9 +77,9 @@ grammar Grammar;
  num_expr
     	: num_expr op = (MUL | DIV) num_expr
 		| num_expr op = (ADD | SUB) num_expr
-		|var_expr
-		|func_expr
-		|INT
+		| var_expr
+		| func_expr
+		| INT
     	| FLOAT
 		| 
     	;
