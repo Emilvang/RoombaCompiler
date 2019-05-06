@@ -49,7 +49,28 @@ namespace RoombaCompiler2.SemanticAnalysis
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context) => SymbolTable.ExitScope();
 
         // TODO: Check Parameters
-        public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => EnterScopeAndSetType(EScopeType.Loop);
+        public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
+        {
+            EnterScopeAndSetType(EScopeType.Loop);
+
+            if (context.FOR() != null)
+            {
+                var variableName = context.IDENTIFIER().GetText();
+
+                TryAddVariableToSymbolTable(variableName, EValueType.Integer);
+            }
+        }
+
+        private void TryAddVariableToSymbolTable(string variableName, EValueType variableType)
+        {
+            if (SymbolTable.Lookup(variableName) != null)
+            {
+                Errors.Add($"Variable with name: {variableName} and type: {variableType} has already been declared.");
+                return; // We cannot put the same variable name in the dictionary;
+            }
+
+            SymbolTable.Put(variableName, new Record(variableName, variableType));
+        }
 
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => SymbolTable.ExitScope();
 
@@ -58,13 +79,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             var variableName = context.GetChild(1).ToStringTree();
             var variableType = context.GetChild(0).ToStringTree();
 
-            if (SymbolTable.Lookup(variableName) != null)
-            {
-                Errors.Add($"Variable with name: {variableName} and type: {variableType} has already been declared.");
-                return; // We cannot put the same variable name in the dictionary;
-            }
-
-            SymbolTable.Put(variableName, new Record(variableName, variableType.GetVariableType()));
+            TryAddVariableToSymbolTable(variableName, variableType.GetVariableType());
         }
 
         public override void EnterNum_expr([NotNull] GrammarParser.Num_exprContext context) => ReportUndeclaredVariables(context);
