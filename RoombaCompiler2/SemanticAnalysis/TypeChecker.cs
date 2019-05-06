@@ -159,22 +159,34 @@ namespace RoombaCompiler2.SemanticAnalysis
             return EValueType.Boolean;
         }
 
+        public override EValueType? VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            var variableName = context.IDENTIFIER().GetText();
+            var variableRecord = _symbolTable.Lookup(variableName);
+
+            if (variableRecord == null)
+            {
+                /// Cannot check the type of a variable that does not exist
+                /// There is an error that has been caught by the <see cref="SymbolListener"/>
+                return null;
+            }
+
+            var expressionType = base.Visit(context.GetChild(2));
+
+            CheckForNumberAssignmentError(variableRecord.Type, expressionType, variableName, "assignment");
+
+            return null;
+        }
+
         public override EValueType? VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
             var declaredType = context.GetChild(0).GetText().GetVariableType();
             var variableName = context.GetChild(1).GetText();
             var expressionType = base.Visit(context.GetChild(3));
 
-            if (declaredType == EValueType.Float && expressionType == EValueType.Integer)
-            {
-                // No Errors skip it
-            }
-            else if (declaredType != expressionType)
-            {
-                Errors.Add($"Expression does not match declared type in the declaration of variable: {variableName}");
-            }
+            CheckForNumberAssignmentError(declaredType, expressionType, variableName, "declaration");
 
-            return declaredType;
+            return null;
         }
 
         public override EValueType? VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
@@ -242,6 +254,18 @@ namespace RoombaCompiler2.SemanticAnalysis
             _symbolTable.ExitScope();
 
             return result;
+        }
+
+        private void CheckForNumberAssignmentError(EValueType declaredType, EValueType? expressionType, string variableName, string action)
+        {
+            if (declaredType == EValueType.Float && expressionType == EValueType.Integer)
+            {
+                // No Errors skip it
+            }
+            else if (declaredType != expressionType)
+            {
+                Errors.Add($"Expression does not match declared type in the {action} of variable: {variableName}");
+            }
         }
     }
 }

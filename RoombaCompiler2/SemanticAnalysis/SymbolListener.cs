@@ -77,6 +77,16 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override void EnterLogic_expr([NotNull] GrammarParser.Logic_exprContext context) => ReportUndeclaredVariablesAndMethods(context);
 
+        public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            var variableName = context.IDENTIFIER().GetText();
+
+            if (SymbolTable.Lookup(variableName) == null)
+            {
+                Errors.Add($"Cannot assign to a variable with name: {variableName} that does not exist");
+            }
+        }
+
         private void ReportUndeclaredVariablesAndMethods(ParserRuleContext context)
         {
             if (context.children == null || !context.children.Any())
@@ -152,7 +162,6 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             return result;
         }
-
 
         private void EnterScopeAndSetType(EScopeType scopeType) => EnterScopeAndSetType(scopeType.ToString());
 
