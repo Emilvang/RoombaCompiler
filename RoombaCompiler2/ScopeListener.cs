@@ -78,7 +78,8 @@ namespace RoombaCompiler2
 
         public override void EnterVar_expr([NotNull] GrammarParser.Var_exprContext context)
         {
-            LookUpScope(context.GetChild(0).GetText());
+            if (!LookUpScope(context.GetChild(0).GetText()))
+                throw new Exception("Variable " + context.GetText() + " could not be found in scope");
             base.EnterVar_expr(context);
         }
 
@@ -91,13 +92,18 @@ namespace RoombaCompiler2
         //Should it be Func_expr or Func_stmt?
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
-            LookUpScope(context.GetChild(0).GetText());
+            if(!LookUpScope(context.GetChild(0).GetText()))
+                throw new Exception("Function " + context.GetChild(0).GetText() + " not found");
+
             base.EnterFunc_expr(context);
         }
         //Needs variable dec. for parametres
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
-            currentScope.SymbolTable.Add(context.GetChild(1).GetText(), context.GetChild(0).GetText());
+            if(!LookUpScope(context.GetChild(1).GetText()))
+                currentScope.SymbolTable.Add(context.GetChild(1).GetText(), context.GetChild(0).GetText());
+            else
+                throw new Exception("A function or variable named " + context.GetChild(1).GetText() + " already exists");
 
             ScopeNode LocalScope = new ScopeNode();
             Scopes.Add(LocalScope);
@@ -156,7 +162,7 @@ namespace RoombaCompiler2
             var variableName = context.GetChild(1).GetText();
             var expression = context.GetChild(3).GetText();
 
-            if (!VarDeclLookup(variableName))
+            if (!LookUpScope(variableName))
             {
                 currentScope.SymbolTable.Add(variableName, expression);
             }
@@ -228,7 +234,7 @@ namespace RoombaCompiler2
                     Scope = Scope.Parent;
                 }
             }
-            throw new Exception("Variable " + expression + " not found");
+            return false;
         }
 
         private bool VarDeclLookup(string expression)

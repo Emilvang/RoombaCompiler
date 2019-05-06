@@ -219,5 +219,17 @@ namespace RoombaCompiler2
 
         }
 
+        public override void EnterReturn_stmt([NotNull] GrammarParser.Return_stmtContext context)
+        {
+            //Made like this to get spaces in between different expressions and the return keyword.
+            string returnCode = "";
+            for (int i = 1; i < context.ChildCount; i++)
+            {
+                returnCode += " " + context.GetChild(i).GetText();
+            }
+            GeneratedCode += prefix + "return" + returnCode;
+            base.EnterReturn_stmt(context);
+        }
+
     }
 }
