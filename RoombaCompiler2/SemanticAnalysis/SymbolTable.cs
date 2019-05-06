@@ -21,9 +21,9 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public void ExitScope() => _current = _current.GetParent();
 
-        public void Put(string key, Record item) => _current.Put(key, item);
+        public void Put(string key, VariableRecord item) => _current.Put(key, item);
 
-        public Record Lookup(string key) => _current.Lookup(key);
+        public VariableRecord Lookup(string key) => _current.Lookup(key);
 
         // called before each traversal
         public void ResetTable() => _root.ResetScope();
@@ -33,7 +33,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             private int _next = 0; // next child to visit
             private Scope _parent; // parent scope                              
             private List<Scope> _children = new List<Scope>(); // children scopes
-            private Dictionary<string, Record> _records = new Dictionary<string, Record>();
+            private Dictionary<string, VariableRecord> _records = new Dictionary<string, VariableRecord>();
             private string _scopeNestness = string.Empty;
 
             private string ScopeName => _scopeNestness + " " + ScopeType;
@@ -51,7 +51,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
 
             // add a new record to the current scope
-            public void Put(string key, Record item) => _records.Add(key, item);
+            public void Put(string key, VariableRecord item) => _records.Add(key, item);
 
             public Scope NextChild()
             {
@@ -71,11 +71,11 @@ namespace RoombaCompiler2.SemanticAnalysis
                 return nextChild;
             }
 
-            public Record Lookup(string key)
+            public VariableRecord Lookup(string key)
             {
                 if (_records.ContainsKey(key))
                 { // is the key in current scope?
-                    Record rec = _records[key];
+                    VariableRecord rec = _records[key];
                     return rec;
                 }
                 else

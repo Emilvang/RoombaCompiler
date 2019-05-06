@@ -3,18 +3,22 @@ using Antlr4.Runtime.Misc;
 using RoombaCompiler2.SemanticAnalysis.Models;
 using RoombaCompiler2.SemanticAnalysis.Utils;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace RoombaCompiler2.SemanticAnalysis
 {
     public class TypeChecker : GrammarBaseVisitor<EValueType?>
     {
-        private readonly SymbolTable _symbolTable;
-        private readonly ICollection<string> Errors = new HashSet<string>();
+        public readonly ICollection<string> Errors = new HashSet<string>();
 
-        public TypeChecker(SymbolTable symbolTable)
+        private readonly SymbolTable _symbolTable;
+        private readonly IReadOnlyDictionary<string, MethodRecord> _methodsTable;
+
+        public TypeChecker(SymbolTable symbolTable, IReadOnlyDictionary<string, MethodRecord> methodsTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
+            _methodsTable = methodsTable ?? throw new ArgumentNullException(nameof(methodsTable));
         }
 
         public override EValueType? VisitProgram([NotNull] GrammarParser.ProgramContext context)
@@ -159,6 +163,13 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
 
             return declaredType;
+        }
+
+        public override EValueType? VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
+        {
+            var childrenWithTypes = context.children.Select(x => x.GetType().ToString()).ToList();
+
+            return base.VisitFunc_expr(context);
         }
 
         public override EValueType? VisitVar_expr([NotNull] GrammarParser.Var_exprContext context) => GetVariableTypeFromSymbolTable(context.GetChild(0).GetText());

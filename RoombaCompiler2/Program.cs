@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using RoombaCompiler2.SemanticAnalysis;
+using RoombaCompiler2.SemanticAnalysis.Utils;
 using System;
 
 namespace RoombaCompiler2
@@ -33,7 +34,7 @@ namespace RoombaCompiler2
 
             sl.SymbolTable.ResetTable();
 
-            var typeChecker = new TypeChecker(sl.SymbolTable);
+            var typeChecker = new TypeChecker(sl.SymbolTable, sl.DeclaredMethods.ToReadOnlyDictionary());
 
             typeChecker.Visit(tree);
             //ParseTreeWalker.Walk(listener, tree);

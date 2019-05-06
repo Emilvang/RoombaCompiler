@@ -1,11 +1,11 @@
 ﻿namespace RoombaCompiler2.SemanticAnalysis.Models
 {
-    public class Record
+    public class VariableRecord
     {
         protected string _id;
         protected EValueType _type;
 
-        public Record(string id, EValueType type)
+        public VariableRecord(string id, EValueType type)
         {
             _id = id;
             _type = type;

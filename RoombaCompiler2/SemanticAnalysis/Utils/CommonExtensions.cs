@@ -1,5 +1,6 @@
 ﻿using RoombaCompiler2.SemanticAnalysis.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RoombaCompiler2.SemanticAnalysis.Utils
@@ -13,6 +14,9 @@ namespace RoombaCompiler2.SemanticAnalysis.Utils
         public static bool IsInteger(this string text) => int.TryParse(text, out _);
 
         public static bool IsBoolLiteral(this string text) => text == "True" || text == "False";
+
+        public static IReadOnlyDictionary<K, V> ToReadOnlyDictionary<K, V>(this IDictionary<K, V> dictionary) =>
+            dictionary.ToDictionary(x => x.Key, x => x.Value);
 
         public static EValueType GetVariableType(this string text)
         {
