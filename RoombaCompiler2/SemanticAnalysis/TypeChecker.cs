@@ -54,13 +54,13 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override EValueType? VisitReturn_stmt([NotNull] GrammarParser.Return_stmtContext context) => base.Visit(context.expr());
 
-        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
 
-        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
 
-        public override EValueType? VisitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => VisitContextAndOpenScope(context.stmts());
 
-        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => VisitContextAndOpenScope(context.stmts());
 
         public override EValueType? VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
@@ -78,6 +78,10 @@ namespace RoombaCompiler2.SemanticAnalysis
                     }
 
                     return variableType;
+                }
+                else if (valueType == typeof(GrammarParser.Func_exprContext))
+                {
+                    return base.Visit(context.GetChild(0));
                 }
                 else if (value.IsFloat())
                 {
@@ -142,7 +146,11 @@ namespace RoombaCompiler2.SemanticAnalysis
                 var leftValueType = base.Visit(context.GetChild(0));
                 var rightValueType = base.Visit(context.GetChild(2));
 
-                if (leftValueType != rightValueType)
+                if (leftValueType.HasValue && leftValueType.Value.IsInteger() && rightValueType.HasValue && rightValueType.Value.IsInteger())
+                {
+                    // Integers and floats can be compared
+                }
+                else if (leftValueType != rightValueType)
                 {
                     Errors.Add($"Found a type error. Cannot mix {leftValueType} and {rightValueType}");
                 }
@@ -151,22 +159,34 @@ namespace RoombaCompiler2.SemanticAnalysis
             return EValueType.Boolean;
         }
 
+        public override EValueType? VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            var variableName = context.IDENTIFIER().GetText();
+            var variableRecord = _symbolTable.Lookup(variableName);
+
+            if (variableRecord == null)
+            {
+                /// Cannot check the type of a variable that does not exist
+                /// There is an error that has been caught by the <see cref="SymbolListener"/>
+                return null;
+            }
+
+            var expressionType = base.Visit(context.GetChild(2));
+
+            CheckForNumberAssignmentError(variableRecord.Type, expressionType, variableName, "assignment");
+
+            return null;
+        }
+
         public override EValueType? VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
             var declaredType = context.GetChild(0).GetText().GetVariableType();
             var variableName = context.GetChild(1).GetText();
             var expressionType = base.Visit(context.GetChild(3));
 
-            if (declaredType == EValueType.Float && expressionType == EValueType.Integer)
-            {
-                // No Errors skip it
-            }
-            else if (declaredType != expressionType)
-            {
-                Errors.Add($"Expression does not match declared type in the declaration of variable: {variableName}");
-            }
+            CheckForNumberAssignmentError(declaredType, expressionType, variableName, "declaration");
 
-            return declaredType;
+            return null;
         }
 
         public override EValueType? VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
@@ -187,7 +207,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
             else if (method.Parameters.Count != context.children.Count(x => x.GetType() == typeof(GrammarParser.ExprContext)))
             {
-                Errors.Add($"Parameter types for the method: {methodName} do not match with declaration");
+                Errors.Add($"There is a different number of parameters when invoking the method: {methodName}");
                 return null;
             }
 
@@ -196,7 +216,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             foreach (var methodParameter in context.children.Where(x => x.GetType() == typeof(GrammarParser.ExprContext)))
             {
                 var actualMethodParameterType = base.Visit(methodParameter);
-                var declaredMethodParameterType = method.Parameters.ElementAtOrDefault(index).Value; // Out of range dictionary
+                var declaredMethodParameterType = method.Parameters.ElementAt(index).Value; // Out of range dictionary
 
                 if (declaredMethodParameterType == EValueType.Float && actualMethodParameterType == EValueType.Integer)
                 {
@@ -214,34 +234,18 @@ namespace RoombaCompiler2.SemanticAnalysis
             return method.ReturnType;
         }
 
-        public override EValueType? VisitVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
-        {
-            var variableName = context.GetChild(0).GetText();
-
-            var declaredType = GetVariableTypeFromSymbolTable(variableName);
-
-            var actualType = base.Visit(context.GetChild(2));
-
-
-            if (declaredType == EValueType.Float && actualType == EValueType.Integer)
-            {
-                //Do nothing
-            }
-           else if (declaredType != actualType)
-            {
-                Errors.Add($"Error with variable name {variableName}: Declared type {declaredType} does not match actual type {actualType}");
-            }
-
-
-
-            return base.VisitVar_stmt(context);
-        }
-
         public override EValueType? VisitVar_expr([NotNull] GrammarParser.Var_exprContext context) => GetVariableTypeFromSymbolTable(context.GetChild(0).GetText());
 
         private EValueType? GetVariableTypeFromSymbolTable(string variableName) => _symbolTable.Lookup(variableName)?.Type;
 
-        private EValueType? VisitContextAndScope(ParserRuleContext context)
+        private EValueType? VisitConditional(ParserRuleContext body, GrammarParser.Logic_exprContext condition)
+        {
+            base.Visit(condition);
+
+            return VisitContextAndOpenScope(body);
+        }
+
+        private EValueType? VisitContextAndOpenScope(ParserRuleContext context)
         {
             _symbolTable.EnterScope();
 
@@ -251,11 +255,16 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             return result;
         }
-        public void PrintErrors()
+
+        private void CheckForNumberAssignmentError(EValueType declaredType, EValueType? expressionType, string variableName, string action)
         {
-            foreach (var Error in Errors)
+            if (declaredType == EValueType.Float && expressionType == EValueType.Integer)
             {
-                System.Console.WriteLine(Error);
+                // No Errors skip it
+            }
+            else if (declaredType != expressionType)
+            {
+                Errors.Add($"Expression does not match declared type in the {action} of variable: {variableName}");
             }
         }
     }

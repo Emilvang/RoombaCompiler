@@ -1,14 +1,65 @@
-﻿Program 
+﻿bool t(int i, int t, int s)
+{
+	return i + t > s
+}
+
+bool t3(int i)
+{
+	return True
+}
+
+bool t1(int s, float i)
+{
+	return True
+}
+
+int kop()
+{
+	return 5
+}
+
+int ko(int ro, bool k)
+{
+	if 5.01 + 5 > ro
+	{
+		k = 1
+	}
+
+	return ro/ro + ro + kop();
+}
+
+
+int r()
+{
+	int t = kop() / 5 + 10 + kop()
+	int sso = ko(t, False)
+
+	ko(5, False)
+
+	bool corect = t1(4, 4.52) and t1(1, 4) and True and 4 > 1
+	float s = 5.0 + 5 * 10
+	float s1 = 5
+	int s3 = 1
+	float ns = 5 + 4 + s3
+
+	while True 
+	{
+	
+	}
+
+	for i = 0 to 5
+	{
+	}
+
+	return 1
+}
+
+Program 
 {
 	int n = 5000
-	
-	float n1 = 5.5
-
-	n1 = n + n1
-
 
 	if True
-	{		
+	{
 		bool r = True
 	}
 	elseif False
