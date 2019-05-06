@@ -73,6 +73,19 @@ namespace RoombaCompiler2.SemanticAnalysis
             TryAddVariableToSymbolTable(variableName, variableType.GetVariableType());
         }
 
+        public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+
+            var variableName = context.GetChild(0).GetText();            
+
+            if (SymbolTable.Lookup(variableName) == null)
+            {
+                Errors.Add($"Variable with name {variableName} doesn't exist in the Symbol Table");
+            }
+
+            base.EnterVar_stmt(context);
+        }        
+
         public override void EnterNum_expr([NotNull] GrammarParser.Num_exprContext context) => ReportUndeclaredVariablesAndMethods(context);
 
         public override void EnterLogic_expr([NotNull] GrammarParser.Logic_exprContext context) => ReportUndeclaredVariablesAndMethods(context);
@@ -170,5 +183,14 @@ namespace RoombaCompiler2.SemanticAnalysis
             SymbolTable.EnterScope();
             SymbolTable.SetScopeType(scopeType);
         }
+
+        public void PrintErrors()
+        {
+            foreach (var Error in Errors)
+            {
+                System.Console.WriteLine(Error);
+            }
+        }
+
     }
 }
