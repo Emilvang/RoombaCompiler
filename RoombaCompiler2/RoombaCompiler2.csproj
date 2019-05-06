@@ -62,7 +62,8 @@
     <Compile Include="ScopeListener.cs" />
     <Compile Include="ScopeNode.cs" />
     <Compile Include="SemanticAnalysis\Models\EValueType.cs" />
-    <Compile Include="SemanticAnalysis\Models\Record.cs" />
+    <Compile Include="SemanticAnalysis\Models\MethodRecord.cs" />
+    <Compile Include="SemanticAnalysis\Models\VariableRecord.cs" />
     <Compile Include="SemanticAnalysis\Models\EScopeType.cs" />
     <Compile Include="SemanticAnalysis\SymbolListener.cs" />
     <Compile Include="SemanticAnalysis\SymbolTable.cs" />
