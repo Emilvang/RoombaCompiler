@@ -1242,11 +1242,11 @@ public partial class GrammarParser : Parser {
 		public Var_exprContext var_expr() {
 			return GetRuleContext<Var_exprContext>(0);
 		}
-		public Num_exprContext num_expr() {
-			return GetRuleContext<Num_exprContext>(0);
-		}
 		public Func_exprContext func_expr() {
 			return GetRuleContext<Func_exprContext>(0);
+		}
+		public Num_exprContext num_expr() {
+			return GetRuleContext<Num_exprContext>(0);
 		}
 		public Logic_exprContext logic_expr() {
 			return GetRuleContext<Logic_exprContext>(0);
@@ -1304,13 +1304,13 @@ public partial class GrammarParser : Parser {
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 229; num_expr(0);
+				State = 229; func_expr();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 230; func_expr();
+				State = 230; num_expr(0);
 				}
 				break;
 			case 5:
@@ -2262,7 +2262,7 @@ public partial class GrammarParser : Parser {
 		'\x2', '\x2', '\x2', '\xE3', '\xE4', '\x3', '\x2', '\x2', '\x2', '\xE4', 
 		'\xE5', '\x3', '\x2', '\x2', '\x2', '\xE5', '\xEB', '\a', '\v', '\x2', 
 		'\x2', '\xE6', '\xEB', '\x5', '\x1E', '\x10', '\x2', '\xE7', '\xEB', '\x5', 
-		' ', '\x11', '\x2', '\xE8', '\xEB', '\x5', '\x16', '\f', '\x2', '\xE9', 
+		'\x16', '\f', '\x2', '\xE8', '\xEB', '\x5', ' ', '\x11', '\x2', '\xE9', 
 		'\xEB', '\x5', '\"', '\x12', '\x2', '\xEA', '\xE1', '\x3', '\x2', '\x2', 
 		'\x2', '\xEA', '\xE6', '\x3', '\x2', '\x2', '\x2', '\xEA', '\xE7', '\x3', 
 		'\x2', '\x2', '\x2', '\xEA', '\xE8', '\x3', '\x2', '\x2', '\x2', '\xEA', 

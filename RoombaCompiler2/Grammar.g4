@@ -64,8 +64,8 @@ grammar Grammar;
  expr
     	: '(' expr? ')'
 		| var_expr
-    	| num_expr
-		| func_expr
+    	| func_expr
+		| num_expr
 		| logic_expr
     	;
  
