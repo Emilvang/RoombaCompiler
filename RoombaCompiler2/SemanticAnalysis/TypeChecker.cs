@@ -79,6 +79,10 @@ namespace RoombaCompiler2.SemanticAnalysis
 
                     return variableType;
                 }
+                else if (valueType == typeof(GrammarParser.Func_exprContext))
+                {
+                    return base.Visit(context.GetChild(0));
+                }
                 else if (value.IsFloat())
                 {
                     return EValueType.Float;
@@ -187,7 +191,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
             else if (method.Parameters.Count != context.children.Count(x => x.GetType() == typeof(GrammarParser.ExprContext)))
             {
-                Errors.Add($"Parameter types for the method: {methodName} do not match with declaration");
+                Errors.Add($"There is a different number of parameters when invoking the method: {methodName}");
                 return null;
             }
 
