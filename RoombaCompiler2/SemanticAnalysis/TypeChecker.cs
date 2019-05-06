@@ -54,13 +54,13 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override EValueType? VisitReturn_stmt([NotNull] GrammarParser.Return_stmtContext context) => base.Visit(context.expr());
 
-        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
 
-        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => VisitConditional(context.stmts(), context.logic_expr());
 
-        public override EValueType? VisitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => VisitContextAndOpenScope(context.stmts());
 
-        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => VisitContextAndScope(context.stmts());
+        public override EValueType? VisitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => VisitContextAndOpenScope(context.stmts());
 
         public override EValueType? VisitNum_expr([NotNull] GrammarParser.Num_exprContext context)
         {
@@ -146,7 +146,11 @@ namespace RoombaCompiler2.SemanticAnalysis
                 var leftValueType = base.Visit(context.GetChild(0));
                 var rightValueType = base.Visit(context.GetChild(2));
 
-                if (leftValueType != rightValueType)
+                if (leftValueType.HasValue && leftValueType.Value.IsInteger() && rightValueType.HasValue && rightValueType.Value.IsInteger())
+                {
+                    // Integers and floats can be compared
+                }
+                else if (leftValueType != rightValueType)
                 {
                     Errors.Add($"Found a type error. Cannot mix {leftValueType} and {rightValueType}");
                 }
@@ -200,7 +204,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             foreach (var methodParameter in context.children.Where(x => x.GetType() == typeof(GrammarParser.ExprContext)))
             {
                 var actualMethodParameterType = base.Visit(methodParameter);
-                var declaredMethodParameterType = method.Parameters.ElementAtOrDefault(index).Value; // Out of range dictionary
+                var declaredMethodParameterType = method.Parameters.ElementAt(index).Value; // Out of range dictionary
 
                 if (declaredMethodParameterType == EValueType.Float && actualMethodParameterType == EValueType.Integer)
                 {
@@ -222,7 +226,14 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         private EValueType? GetVariableTypeFromSymbolTable(string variableName) => _symbolTable.Lookup(variableName)?.Type;
 
-        private EValueType? VisitContextAndScope(ParserRuleContext context)
+        private EValueType? VisitConditional(ParserRuleContext body, GrammarParser.Logic_exprContext condition)
+        {
+            base.Visit(condition);
+
+            return VisitContextAndOpenScope(body);
+        }
+
+        private EValueType? VisitContextAndOpenScope(ParserRuleContext context)
         {
             _symbolTable.EnterScope();
 

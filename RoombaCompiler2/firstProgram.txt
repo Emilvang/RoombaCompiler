@@ -20,9 +20,9 @@ int kop()
 
 int ko(int ro, bool k)
 {
-	if k == True
+	if 5.01 + 5 > ro
 	{
-		int j = 5
+		k = 1
 	}
 
 	return ro;
@@ -33,6 +33,8 @@ int r()
 {
 	int t = kop() / 5 + 10 + kop()
 	int sso = ko(t, False)
+
+	ko(5, False)
 
 	bool corect = t1(4, 4.52) and t1(1, 4) and True and 4 > 1
 	float s = 5.0 + 5 * 10

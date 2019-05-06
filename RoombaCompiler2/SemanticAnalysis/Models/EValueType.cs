@@ -2,7 +2,6 @@
 {
     public enum EValueType
     {
-        Unknown,
         Boolean,
         Integer,
         Float,
