@@ -22,7 +22,7 @@ namespace RoombaCompiler2
     {
         public string GeneratedCode { get; set; }
         public string prefix = "\r\n";
-
+        
         public CodeGenListener()
         {
             GeneratedCode = "";
@@ -36,22 +36,15 @@ namespace RoombaCompiler2
             base.EnterProgram(context);
         }
 
-        public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
-        {
-            //Necessary? Not sure
-            GeneratedCode += prefix + "self.close()";
-            base.ExitProgram(context);
-        }
-
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
-        {
-
-            CreateDefaultFunction(context);
+        {           
+            
+           CreateDefaultFunction(context);
+                
 
             base.EnterFunc_stmt(context);
         }
-
-        //Probably needs an update with added parameter to the grammar.
+        
         private void CreateDefaultFunction(GrammarParser.Func_stmtContext context)
         {
             GeneratedCode += prefix + "def " + context.GetChild(1) + "(";
@@ -89,131 +82,15 @@ namespace RoombaCompiler2
 
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
-
+            prefix = RemovePrefix(prefix, "\t");            
+            
             base.ExitFunc_stmt(context);
         }
         public override void EnterFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {
-
-            switch (context.GetChild(0).GetText())
-            {
-
-                case "Drive":
-                    //4 = One argument for Drive.
-                    if (context.ChildCount == 4)
-                    {
-                        DriveOneArgument(context);
-                    }
-                    //else: two arguments for Drive
-                    else
-                    {
-                        DriveTwoArguments(context);
-                    }
-                    break;
-                case "Turn":
-                    Turn(context);
-                    break;
-                case "CoverCircle":
-                    CoverCircle(context);
-                    break;
-                case "CoverRectangle":
-                    CoverRectangle(context);
-                    break;
-                case "Stop":
-                    Stop();
-                    break;
-                case "Dock":
-                    Dock();
-                    break;
-                default:
-                    GeneratedCode += prefix + context.GetText();
-                    break;
-            }
+        {            
+            GeneratedCode += prefix + context.GetText();
             base.EnterFunc_expr(context);
         }
-        //Not sure if time.sleep needs to be added somehow? 
-        private void DriveOneArgument(GrammarParser.Func_exprContext context)
-        {
-            string speed = context.GetChild(2).GetText();
-            //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            GeneratedCode += $"{prefix}self.drive_straight(({speed})*10)";
-
-        }
-        private void DriveTwoArguments(GrammarParser.Func_exprContext context)
-        {
-            string speed = context.GetChild(2).GetText();
-            string distance = context.GetChild(4).GetText();
-            //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            GeneratedCode += $"{prefix}self.drive_distance({distance}, ({speed})*10)";
-        }
-        private void Turn(GrammarParser.Func_exprContext context)
-        {
-            string degrees = context.GetChild(2).GetText();
-            //Not sure what 0 means? 
-            //Should it be turn while driving? Right now it's stationary, I think.
-            GeneratedCode += $"{prefix}self.drive_turn({degrees},0)";
-
-        }
-        private void CoverCircle(GrammarParser.Func_exprContext context)
-        {
-
-        }
-        private void CoverRectangle(GrammarParser.Func_exprContext context)
-        {
-            /*
-            Not sure if it works?
-            Need to set up simulator
-            Base idea:
-            */
-            //Clean one line up to h. 
-            //Turn 90 degrees.
-            //Drive 5 cm to the right?
-            //Turn 90 degrees
-            //Clean one line down to h.
-            //Turn -90 degrees
-            //Drive 5 cm to the right
-            //Turn -90 degrees
-            //Repeat until w has been reached, somehow.
-
-            string coveredWidth = "0";
-            string width = context.GetChild(2).GetText();
-
-            string height = context.GetChild(4).GetText();
-            //Does it accept floats? We need to test this.
-            string turnDistance = "0.05";
-
-            string stringToAdd = prefix;
-            stringToAdd += $"coveredWidth = {coveredWidth}";
-            stringToAdd += $"{prefix}while coveredWidth <= {width}:";
-            prefix += "\t";
-            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
-            stringToAdd += $"{prefix}self.drive_stop()";
-            stringToAdd += $"{prefix}self.drive_turn(90,0)";
-            //Does it need pause here?
-            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
-            stringToAdd += $"{prefix}self.drive_turn(90,0)";
-            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
-            stringToAdd += $"{prefix}self.drive_stop()";
-            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
-            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
-            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
-            stringToAdd += $"{prefix}coveredWidth += 5";
-            GeneratedCode += stringToAdd;
-            prefix = RemovePrefix(prefix, "\t");
-
-        }
-        private void Dock()
-        {
-            //Couldn't find the necessary code from pycreate2. Just a guess
-            GeneratedCode += $"{prefix}self.dock()";
-        }
-        private void Stop()
-        {
-            GeneratedCode += $"{prefix}self.drive_stop()";
-        }
-
-
 
         public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
@@ -223,20 +100,20 @@ namespace RoombaCompiler2
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
-
+            
             switch (context.GetChild(0).GetText())
             {
-                case "for":
-
+                case "for":                    
+                                      
                     //Get the inital and end value of i
                     int Start = Convert.ToInt32(context.GetChild(3).GetText());
-                    int End = Convert.ToInt32(context.GetChild(5).GetText());
+                    int End = Convert.ToInt32(context.GetChild(5).GetText());                    
                     GeneratedCode += $"{prefix}for i in range({Start},{End}):";
                     prefix += "\t";
                     break;
-                case "while":
+                case "while":                   
                     string expression = context.GetChild(1).GetText();
-                    GeneratedCode += $"{prefix}while {SearchAndReplace(expression)}:";
+                    GeneratedCode += $"{prefix}while {expression}:";
                     prefix += "\t";
                     break;
                 default:
@@ -247,8 +124,6 @@ namespace RoombaCompiler2
             base.EnterIter_stmt(context);
         }
 
-
-
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             prefix = RemovePrefix(prefix, "\t");
@@ -257,11 +132,11 @@ namespace RoombaCompiler2
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-
+            
             string variableName = context.GetChild(1).GetText();
             string expression = context.GetChild(3).GetText();
 
-            string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
+            string stringToAdd = $"{variableName} = {expression}";
 
             GeneratedCode += prefix + stringToAdd;
 
@@ -273,10 +148,10 @@ namespace RoombaCompiler2
             //Do nothing?
             base.ExitVar_decl(context);
         }
-
+       
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-
+            
             GeneratedCode += prefix + context.GetText();
             base.EnterVar_stmt(context);
         }
@@ -297,7 +172,7 @@ namespace RoombaCompiler2
         public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
         {
 
-            string stringToAdd = $"if {context.GetChild(1).GetText()}:";
+            string stringToAdd = $"if {context.GetChild(1).GetText()}:";            
             GeneratedCode += prefix + stringToAdd;
             prefix += "\t";
 
@@ -343,37 +218,6 @@ namespace RoombaCompiler2
             return cleanPath;
 
         }
-        private string SearchAndReplace(string sourceString)
-        {
 
-            Dictionary<string, string> TranslateScope = new Dictionary<string, string>();
-
-            TranslateScope.Add("And", " AND ");
-            TranslateScope.Add("and", " AND ");
-            TranslateScope.Add("Or", " OR ");
-            TranslateScope.Add("or", " OR ");
-
-            //Has to replace certain elements for the compute function to work. 
-            foreach (var variable in TranslateScope)
-            {
-                try
-                {
-                    if (sourceString.Contains(variable.Key.ToString()))
-                    {
-                        sourceString = sourceString.Replace(variable.Key.ToString(), variable.Value.ToString());
-
-                    }
-
-                }
-                catch (Exception)
-                {
-
-                }
-            }
-
-            return sourceString;
-
-
-        }
     }
 }
