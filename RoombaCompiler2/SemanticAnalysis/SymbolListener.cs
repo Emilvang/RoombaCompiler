@@ -40,6 +40,11 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             foreach (var context in parametersContexts)
             {
+                if (context.ChildCount == 0)
+                {
+                    continue;
+                }
+
                 var variableType = context.GetChild(0).GetText();
                 var variableName = context.GetChild(1).GetText();
 
@@ -73,6 +78,9 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             EnterScopeAndSetType($"{EScopeType.Method} [{methodType}] [{methodName}]");
         }
+
+        public override void EnterParameter_decl([NotNull] GrammarParser.Parameter_declContext context) => 
+            TryAddVariableToSymbolTable(context.GetChild(1).GetText(), context.GetChild(0).GetText().GetVariableType());
 
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context) => SymbolTable.ExitScope();
 

@@ -40,7 +40,7 @@ namespace RoombaCompiler2.SemanticAnalysis
             var methodName = context.GetChild(1).GetText();
             var returnType = base.Visit(context.GetChild(context.ChildCount - 2));
 
-            if (methodType != returnType)
+            if (methodType != EValueType.Void && methodType != returnType)
             {
                 Errors.Add($"Found a Type missmatch in the method: {methodName} declaration. Method type is {methodType} and return type is {returnType}");
             }
@@ -97,7 +97,7 @@ namespace RoombaCompiler2.SemanticAnalysis
                 var leftValueType = base.Visit(context.GetChild(0));
                 var rightValueType = base.Visit(context.GetChild(2));
 
-                if ((leftValueType == EValueType.Integer && rightValueType == EValueType.Float) || 
+                if ((leftValueType == EValueType.Integer && rightValueType == EValueType.Float) ||
                     (leftValueType == EValueType.Float && rightValueType == EValueType.Integer))
                 {
                     return EValueType.Float; // If a Float is found in the expression the expression automatically becomes float expression
@@ -127,6 +127,10 @@ namespace RoombaCompiler2.SemanticAnalysis
                     {
                         Errors.Add($"Variable with name: {value} and type: {variableType} cannot be used in a logical expression.");
                     }
+                }
+                else if (valueType == typeof(GrammarParser.Func_exprContext))
+                {
+                    base.Visit(context.GetChild(0));
                 }
                 else if (!value.IsBoolLiteral())
                 {
@@ -167,9 +171,47 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override EValueType? VisitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
         {
-            var childrenWithTypes = context.children.Select(x => x.GetType().ToString()).ToList();
+            var methodName = context.IDENTIFIER().GetText();
+            if (!_methodsTable.ContainsKey(methodName))
+            {
+                Errors.Add($"Method with name: {methodName} does not exist.");
+                return null;
+            }
 
-            return base.VisitFunc_expr(context);
+            var method = _methodsTable[methodName];
+
+            // Its a hack when calling a function with no parameters
+            if (method.Parameters.Count == 0 && context.children.SingleOrDefault(x => x.GetType() == typeof(GrammarParser.ExprContext))?.GetChild(0)?.GetChild(0) == null)
+            {
+                return method.ReturnType;
+            }
+            else if (method.Parameters.Count != context.children.Count(x => x.GetType() == typeof(GrammarParser.ExprContext)))
+            {
+                Errors.Add($"Parameter types for the method: {methodName} do not match with declaration");
+                return null;
+            }
+
+            var index = 0;
+
+            foreach (var methodParameter in context.children.Where(x => x.GetType() == typeof(GrammarParser.ExprContext)))
+            {
+                var actualMethodParameterType = base.Visit(methodParameter);
+                var declaredMethodParameterType = method.Parameters.ElementAtOrDefault(index).Value; // Out of range dictionary
+
+                if (declaredMethodParameterType == EValueType.Float && actualMethodParameterType == EValueType.Integer)
+                {
+                    // It is okay to pass an int into a float
+                }
+                else if (actualMethodParameterType != declaredMethodParameterType)
+                {
+                    Errors.Add($"Parameter types for the method: {methodName} do not match with declaration");
+                    return null;
+                }
+
+                index++;
+            }
+
+            return method.ReturnType;
         }
 
         public override EValueType? VisitVar_expr([NotNull] GrammarParser.Var_exprContext context) => GetVariableTypeFromSymbolTable(context.GetChild(0).GetText());

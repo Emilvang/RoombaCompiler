@@ -3,7 +3,6 @@
     public enum EValueType
     {
         Unknown,
-        DateTime,
         Boolean,
         Integer,
         Float,

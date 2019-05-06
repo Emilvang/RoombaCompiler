@@ -1,18 +1,24 @@
-﻿bool t()
+﻿bool t(int i, int t, int s)
+{
+	return i + t > s
+}
+
+bool t3(int i)
 {
 	return True
 }
 
-bool t1(int s, int i)
+bool t1(int s, float i)
 {
 	return True
 }
+
 
 int r()
 {
-	bool corect = t1(1, 1)
-	bool asdasd = t222()
-	float s = 5.0
+
+	bool corect = t1(1, 4) and True and 4 > 1
+	float s = 5.0 + 5 * 10
 	float s1 = 5
 	int s3 = 1
 	float ns = 5 + 4 + s3
@@ -37,7 +43,7 @@ Program
 	{
 		bool r = True
 	}
-	else if False
+	elseif False
 	{
 		bool r = False
 	}
