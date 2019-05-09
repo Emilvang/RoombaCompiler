@@ -13,7 +13,12 @@ namespace RoombaCompiler2.SemanticAnalysis
         public ICollection<string> Errors = new HashSet<string>();
         public IDictionary<string, MethodRecord> DeclaredMethods = new Dictionary<string, MethodRecord>();
 
-        public override void EnterProgram([NotNull] GrammarParser.ProgramContext context) => EnterScopeAndSetType(EScopeType.Program);
+
+        public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
+        {
+            EnterScopeAndSetType(EScopeType.Program);
+            PopulateWithBuiltInFunctions();
+        }
 
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context) => SymbolTable.ExitScope();
 
@@ -28,34 +33,6 @@ namespace RoombaCompiler2.SemanticAnalysis
         public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => EnterScopeAndSetType(EScopeType.Conditional);
 
         public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => SymbolTable.ExitScope();
-
-        private IReadOnlyDictionary<string, EValueType> GetParameters(IEnumerable<GrammarParser.Parameter_declContext> parametersContexts, string functionName)
-        {
-            var result = new Dictionary<string, EValueType>();
-
-            if (parametersContexts == null || !parametersContexts.Any())
-            {
-                return result;
-            }
-
-            foreach (var context in parametersContexts)
-            {
-                var variableType = context.GetChild(0).GetText();
-                var variableName = context.GetChild(1).GetText();
-
-                if (result.ContainsKey(variableName))
-                {
-                    Errors.Add($"Function declaration with name: {functionName} already contains a paramater with the name: {variableName}");
-                    return result;
-                }
-                else
-                {
-                    result.Add(variableName, variableType.GetVariableType());
-                }
-            }
-
-            return result;
-        }
 
         public override void EnterFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
@@ -74,9 +51,11 @@ namespace RoombaCompiler2.SemanticAnalysis
             EnterScopeAndSetType($"{EScopeType.Method} [{methodType}] [{methodName}]");
         }
 
+        public override void EnterParameter_decl([NotNull] GrammarParser.Parameter_declContext context) => 
+            TryAddVariableToSymbolTable(context.GetChild(1).GetText(), context.GetChild(0).GetText().GetVariableType());
+
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context) => SymbolTable.ExitScope();
 
-        // TODO: Check Parameters
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
             EnterScopeAndSetType(EScopeType.Loop);
@@ -89,17 +68,6 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
         }
 
-        private void TryAddVariableToSymbolTable(string variableName, EValueType variableType)
-        {
-            if (SymbolTable.Lookup(variableName) != null)
-            {
-                Errors.Add($"Variable with name: {variableName} and type: {variableType} has already been declared.");
-                return; // We cannot put the same variable name in the dictionary;
-            }
-
-            SymbolTable.Put(variableName, new VariableRecord(variableName, variableType));
-        }
-
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => SymbolTable.ExitScope();
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
@@ -109,10 +77,21 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             TryAddVariableToSymbolTable(variableName, variableType.GetVariableType());
         }
+ 
 
         public override void EnterNum_expr([NotNull] GrammarParser.Num_exprContext context) => ReportUndeclaredVariablesAndMethods(context);
 
         public override void EnterLogic_expr([NotNull] GrammarParser.Logic_exprContext context) => ReportUndeclaredVariablesAndMethods(context);
+
+        public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
+        {
+            var variableName = context.IDENTIFIER().GetText();
+
+            if (SymbolTable.Lookup(variableName) == null)
+            {
+                Errors.Add($"Cannot assign to a variable with name: {variableName} that does not exist");
+            }
+        }
 
         private void ReportUndeclaredVariablesAndMethods(ParserRuleContext context)
         {
@@ -146,6 +125,50 @@ namespace RoombaCompiler2.SemanticAnalysis
             }
         }
 
+        private void TryAddVariableToSymbolTable(string variableName, EValueType variableType)
+        {
+            if (SymbolTable.Lookup(variableName) != null)
+            {
+                Errors.Add($"Variable with name: {variableName} and type: {variableType} has already been declared.");
+                return; // We cannot put the same variable name in the dictionary;
+            }
+
+            SymbolTable.Put(variableName, new VariableRecord(variableName, variableType));
+        }
+
+        private IReadOnlyDictionary<string, EValueType> GetParameters(IEnumerable<GrammarParser.Parameter_declContext> parametersContexts, string functionName)
+        {
+            var result = new Dictionary<string, EValueType>();
+
+            if (parametersContexts == null || !parametersContexts.Any())
+            {
+                return result;
+            }
+
+            foreach (var context in parametersContexts)
+            {
+                if (context.ChildCount == 0)
+                {
+                    continue;
+                }
+
+                var variableType = context.GetChild(0).GetText();
+                var variableName = context.GetChild(1).GetText();
+
+                if (result.ContainsKey(variableName))
+                {
+                    Errors.Add($"Function declaration with name: {functionName} already contains a paramater with the name: {variableName}");
+                    return result;
+                }
+                else
+                {
+                    result.Add(variableName, variableType.GetVariableType());
+                }
+            }
+
+            return result;
+        }
+
         private void EnterScopeAndSetType(EScopeType scopeType) => EnterScopeAndSetType(scopeType.ToString());
 
         private void EnterScopeAndSetType(string scopeType)
@@ -153,5 +176,70 @@ namespace RoombaCompiler2.SemanticAnalysis
             SymbolTable.EnterScope();
             SymbolTable.SetScopeType(scopeType);
         }
+
+        public void PrintErrors()
+        {
+            foreach (var Error in Errors)
+            {
+                System.Console.WriteLine(Error);
+            }
+        }
+
+        private void PopulateWithBuiltInFunctions()
+        {
+            //Solution to built in procedures
+            //Needs to be called somewhere.
+
+            //Turn
+            var turnDictionary = new Dictionary<string, EValueType>();
+            turnDictionary.Add("degrees", EValueType.Integer);
+
+            MethodRecord turnRecord = new MethodRecord("Turn", EValueType.Void, turnDictionary);
+            DeclaredMethods.Add("Turn", turnRecord);
+
+            //Stop
+            var stopDictionary = new Dictionary<string, EValueType>();
+            MethodRecord stopRecord = new MethodRecord("Stop", EValueType.Void, stopDictionary);
+            DeclaredMethods.Add("Stop", stopRecord);
+
+            //Pause
+            var pauseDictionary = new Dictionary<string, EValueType>();
+            pauseDictionary.Add("MilliSeconds", EValueType.Integer);
+            MethodRecord pauseRecord = new MethodRecord("Pause", EValueType.Void, pauseDictionary);
+            DeclaredMethods.Add("Pause", pauseRecord);
+
+            //DriveStraight //Rename in project instead of introducing function overloading
+            var driveStraightDictionary = new Dictionary<string, EValueType>();
+            driveStraightDictionary.Add("Speed", EValueType.Integer);
+            MethodRecord driveStraightRecord = new MethodRecord("DriveStraight", EValueType.Void, driveStraightDictionary);
+            DeclaredMethods.Add("DriveStraight", driveStraightRecord);
+
+            //Drive
+            var driveDictionary = new Dictionary<string, EValueType>();
+            driveDictionary.Add("Speed", EValueType.Integer);
+            driveDictionary.Add("Distance", EValueType.Integer);
+            MethodRecord driveRecord = new MethodRecord("Drive", EValueType.Void, driveDictionary);
+            DeclaredMethods.Add("Drive", driveRecord);
+
+            //CoverCircle
+            var coverCircleDictionary = new Dictionary<string, EValueType>();
+            coverCircleDictionary.Add("Radius", EValueType.Integer);
+            MethodRecord coverCircleRecord = new MethodRecord("CoverCircle", EValueType.Void, coverCircleDictionary);
+            DeclaredMethods.Add("CoverCircle", coverCircleRecord);
+
+            //CoverRectangle
+            var coverRectangleDictionary = new Dictionary<string, EValueType>();
+            coverRectangleDictionary.Add("Width", EValueType.Integer);
+            coverRectangleDictionary.Add("Height", EValueType.Integer);
+            MethodRecord coverRectangleRecord = new MethodRecord("CoverRectangle", EValueType.Void, coverRectangleDictionary);
+            DeclaredMethods.Add("CoverRectangle", coverRectangleRecord);
+
+            //Dock
+            var dockDictionary = new Dictionary<string, EValueType>();
+            MethodRecord dockRecord = new MethodRecord("Dock", EValueType.Void, dockDictionary);
+            DeclaredMethods.Add("Dock", dockRecord);
+
+        }
+
     }
 }

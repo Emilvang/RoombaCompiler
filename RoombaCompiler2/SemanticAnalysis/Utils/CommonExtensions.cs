@@ -15,6 +15,8 @@ namespace RoombaCompiler2.SemanticAnalysis.Utils
 
         public static bool IsBoolLiteral(this string text) => text == "True" || text == "False";
 
+        public static bool IsInteger(this EValueType valueType) => valueType == EValueType.Float || valueType == EValueType.Integer;
+
         public static IReadOnlyDictionary<K, V> ToReadOnlyDictionary<K, V>(this IDictionary<K, V> dictionary) =>
             dictionary.ToDictionary(x => x.Key, x => x.Value);
 
