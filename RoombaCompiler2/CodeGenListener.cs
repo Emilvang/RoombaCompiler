@@ -360,10 +360,8 @@ namespace RoombaCompiler2
             //Needs a fix for actual words including the phrases "And" "and" and so on..
             Dictionary<string, string> TranslateScope = new Dictionary<string, string>();
 
-            TranslateScope.Add("And", " AND ");
-            TranslateScope.Add("and", " AND ");
-            TranslateScope.Add("Or", " OR ");
-            TranslateScope.Add("or", " OR ");
+            TranslateScope.Add("AND", " AND ");
+            TranslateScope.Add("OR", " AND ");
 
             //Has to replace certain elements for the compute function to work. 
             foreach (var variable in TranslateScope)

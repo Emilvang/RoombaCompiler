@@ -119,8 +119,8 @@ compileUnit
 
 ADDARRAY : 'add';
 
-AND : 'and' | 'AND';
-OR : 'or' | 'OR';
+AND : 'AND';
+OR : 'OR';
 
 LT : '<';
 GT : '>';

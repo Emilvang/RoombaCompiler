@@ -13,8 +13,8 @@ null
 'print'
 'return'
 'add'
-null
-null
+'AND'
+'OR'
 '<'
 '>'
 '>='

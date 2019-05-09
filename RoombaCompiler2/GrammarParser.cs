@@ -57,10 +57,10 @@ public partial class GrammarParser : Parser {
 
 	private static readonly string[] _LiteralNames = {
 		null, "'Program'", "'{'", "'}'", "'='", "'['", "','", "']'", "'('", "')'", 
-		"'to'", "'print'", "'return'", "'add'", null, null, "'<'", "'>'", "'>='", 
-		"'<='", "'!='", "'=='", "'int'", "'float'", "'bool'", "'[]'", "'void'", 
-		"'if'", "'elseif'", "'else'", "'while'", "'for'", "'*'", "'/'", "'+'", 
-		"'-'"
+		"'to'", "'print'", "'return'", "'add'", "'AND'", "'OR'", "'<'", "'>'", 
+		"'>='", "'<='", "'!='", "'=='", "'int'", "'float'", "'bool'", "'[]'", 
+		"'void'", "'if'", "'elseif'", "'else'", "'while'", "'for'", "'*'", "'/'", 
+		"'+'", "'-'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
@@ -979,12 +979,7 @@ public partial class GrammarParser : Parser {
 			if (typedVisitor != null) return typedVisitor.VisitFunc_expr(this);
 			else return visitor.VisitChildren(this);
 		}
-
-        internal bool Single()
-        {
-            throw new NotImplementedException();
-        }
-    }
+	}
 
 	[RuleVersion(0)]
 	public Func_exprContext func_expr() {
