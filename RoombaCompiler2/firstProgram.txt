@@ -1,7 +1,7 @@
 ﻿bool t(int i, int t, int s)
 {
 
-	bool r = True and False or (5>10 and True and False)
+	bool r = True AND False OR (5>10 AND True OR False)
 
 	return i + t > s
 }
@@ -39,13 +39,13 @@ int r()
 
 	ko(5, False)
 
-	bool corect = t1(4, 4.52) and t1(1, 4) and True and 4 > 1
+	bool corect = t1(4, 4.52) AND t1(1, 4) AND True AND 4 > 1
 	float s = 5 + 5 * 1
 	float s1 = 5
 	int s3 = 1
 	float ns = 5 + 4 + s3
 
-	while corect and False and (True or ( s3 > s1))
+	while corect AND False AND (True OR ( s3 > s1))
 	{
 	
 	}
@@ -64,7 +64,7 @@ Program
 {
 	int n = 5000
 
-	if True
+	if True AND True
 	{
 		bool r = True
 	}

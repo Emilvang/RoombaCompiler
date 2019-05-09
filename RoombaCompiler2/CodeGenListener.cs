@@ -224,7 +224,7 @@ namespace RoombaCompiler2
 
         public override void EnterVar_expr([NotNull] GrammarParser.Var_exprContext context)
         {
-            GeneratedCode += $"{context.GetText()}";
+            //GeneratedCode += $"{context.GetText()}";
             base.EnterVar_expr(context);
         }
 
@@ -264,12 +264,11 @@ namespace RoombaCompiler2
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-            //Needs work..
+            
             string variableName = context.GetChild(1).GetText();
             string expression = context.GetChild(3).GetText();                       
-
-
-            //string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
+            
+            
             string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
             GeneratedCode += prefix + stringToAdd;
 
@@ -318,7 +317,7 @@ namespace RoombaCompiler2
         public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
         {
 
-            string stringToAdd = $"if {context.GetChild(1).GetText()}:";
+            string stringToAdd = $"if {SearchAndReplace(context.GetChild(1).GetText())}:";
             GeneratedCode += prefix + stringToAdd;
             prefix += "\t";
 
@@ -331,7 +330,7 @@ namespace RoombaCompiler2
         }
         public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
         {
-            string stringToAdd = $"elif {context.GetChild(1).GetText()}:";
+            string stringToAdd = $"elif {SearchAndReplace(context.GetChild(1).GetText())}:";
             GeneratedCode += prefix + stringToAdd;
             prefix += "\t";
             base.EnterElseif_stmt(context);
