@@ -1,7 +1,7 @@
 ﻿bool t(int i, int t, int s)
 {
 
-	bool r = (True and False or (5>10))
+	bool r = True and False or (5>10 and True and False)
 
 	return i + t > s
 }
@@ -45,7 +45,7 @@ int r()
 	int s3 = 1
 	float ns = 5 + 4 + s3
 
-	while corect
+	while corect and False and (True or ( s3 > s1))
 	{
 	
 	}
