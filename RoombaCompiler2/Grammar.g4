@@ -75,7 +75,8 @@ grammar Grammar;
     	;
  
  num_expr
-    	: num_expr op = (MUL | DIV) num_expr
+    	: '(' num_expr ')' 
+		| num_expr op = (MUL | DIV) num_expr
 		| num_expr op = (ADD | SUB) num_expr
 		| var_expr
 		| func_expr
