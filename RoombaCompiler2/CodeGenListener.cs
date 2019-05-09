@@ -219,6 +219,13 @@ namespace RoombaCompiler2
         {
             //Do nothing
             base.ExitFunc_expr(context);
+        }        
+        
+
+        public override void EnterVar_expr([NotNull] GrammarParser.Var_exprContext context)
+        {
+            GeneratedCode += $"{context.GetText()}";
+            base.EnterVar_expr(context);
         }
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
@@ -257,12 +264,13 @@ namespace RoombaCompiler2
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-
+            //Needs work..
             string variableName = context.GetChild(1).GetText();
-            string expression = context.GetChild(3).GetText();
+            string expression = context.GetChild(3).GetText();                       
 
+
+            //string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
             string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
-
             GeneratedCode += prefix + stringToAdd;
 
             base.EnterVar_decl(context);
@@ -292,6 +300,7 @@ namespace RoombaCompiler2
             GeneratedCode += prefix + "return" + returnCode;
             base.EnterReturn_stmt(context);
         }
+        
 
         public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
         {
@@ -358,12 +367,14 @@ namespace RoombaCompiler2
         private string SearchAndReplace(string sourceString)
         {
             //Needs a fix for actual words including the phrases "And" "and" and so on..
+            //Needs better solution
+            //Quick fix: Only allow AND and OR, but still would prefer more durable solution
             Dictionary<string, string> TranslateScope = new Dictionary<string, string>();
 
-            TranslateScope.Add("And", " AND ");
-            TranslateScope.Add("and", " AND ");
-            TranslateScope.Add("Or", " OR ");
-            TranslateScope.Add("or", " OR ");
+            TranslateScope.Add("+", " + ");
+            TranslateScope.Add("-", " - ");
+            TranslateScope.Add("/", " / ");
+            TranslateScope.Add("*", " * ");
 
             //Has to replace certain elements for the compute function to work. 
             foreach (var variable in TranslateScope)
