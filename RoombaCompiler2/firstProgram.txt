@@ -1,5 +1,8 @@
 ﻿bool t(int i, int t, int s)
 {
+
+	bool r = (True and False or (5>10))
+
 	return i + t > s
 }
 
@@ -37,12 +40,12 @@ int r()
 	ko(5, False)
 
 	bool corect = t1(4, 4.52) and t1(1, 4) and True and 4 > 1
-	float s = 5.0 + 5 * 10
+	float s = 5 + 5 * 1
 	float s1 = 5
 	int s3 = 1
 	float ns = 5 + 4 + s3
 
-	while corect or kop()
+	while corect
 	{
 	
 	}

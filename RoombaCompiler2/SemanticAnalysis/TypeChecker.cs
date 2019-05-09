@@ -5,6 +5,7 @@ using RoombaCompiler2.SemanticAnalysis.Utils;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Antlr4.Runtime.Tree;
 
 namespace RoombaCompiler2.SemanticAnalysis
 {
@@ -189,6 +190,8 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             return null;
         }
+
+        public override EValueType? VisitExpr([NotNull] GrammarParser.ExprContext context) => base.Visit(context.children.Single(x => x.GetType() != typeof(TerminalNodeImpl)));
 
         public override EValueType? VisitVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
