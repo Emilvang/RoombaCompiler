@@ -194,29 +194,24 @@ namespace RoombaCompiler2
 
             return stringToReturn;
         }
-
-        private int getSeconds(int distance, int speed)
-        {
-            return Math.Abs(distance / (speed * 10));
-        }
+                
         private string Turn(string degrees)
         {
 
             string stringToReturn = "";
 
-
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
             stringToReturn += $"{prefix}self.time.sleep(2)";
 
             return stringToReturn;
-
-           // GeneratedCode += $"{prefix}self.create.drive_turn({degrees},0)";
+           
 
         }
         private void CoverCircle(GrammarParser.Func_exprContext context)
         {
 
         }
+        //Seems to work
         private void CoverRectangle(GrammarParser.Func_exprContext context)
         {
             /*
@@ -230,12 +225,12 @@ namespace RoombaCompiler2
             //Turn -90 degrees
             //Drive 5 cm to the right
             //Turn -90 degrees
-            //Repeat until w has been reached, somehow.
+            //Repeat
            
             string width = context.GetChild(2).GetText();
 
             string height = context.GetChild(4).GetText();
-            //Does it accept floats? We need to test this.
+            //The small correction drives after the turns might need to be adjusted. It drives crooked for some reason..Not sure how to fix.
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
@@ -243,11 +238,11 @@ namespace RoombaCompiler2
             prefix += "\t";
             stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments("5", "1");
+            stringToAdd += DriveTwoArguments("5", "30");
             stringToAdd += Turn("90");
             stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("-90");
-            stringToAdd += DriveTwoArguments("5", "1");
+            stringToAdd += DriveTwoArguments("5", "30");
             stringToAdd += Turn("-90");
             stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
 
@@ -255,14 +250,16 @@ namespace RoombaCompiler2
             prefix = RemovePrefix(prefix, "\t");
 
         }
+        //No clue
         private void Dock()
         {
             //Couldn't find the necessary code from pycreate2. Just a guess
             GeneratedCode += $"{prefix}self.create.dock()";
         }
+        //Is this even necessary?
         private void Stop()
         {
-            GeneratedCode += $"{prefix}self.create.drive_stop()";
+            GeneratedCode += $"{prefix}self.create.drive_direct(0,0)";
         }
 
 
