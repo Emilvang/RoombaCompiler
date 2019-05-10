@@ -119,16 +119,16 @@ namespace RoombaCompiler2
                     //4 = One argument for Drive.
                     if (context.ChildCount == 4)
                     {
-                        DriveOneArgument(context);
+                        GeneratedCode += DriveOneArgument(context.GetChild(4).GetText());
                     }
                     //else: two arguments for Drive
                     else
                     {
-                        DriveTwoArguments(context);
+                        GeneratedCode += DriveTwoArguments(context.GetChild(2).GetText(), context.GetChild(4).GetText());
                     }
                     break;
                 case "Turn":
-                    Turn(context);
+                    GeneratedCode += Turn(context.GetChild(2).GetText());
                     break;
                 case "CoverCircle":
                     CoverCircle(context);
@@ -166,33 +166,47 @@ namespace RoombaCompiler2
 
         }
 
-        //Not sure if time.sleep needs to be added somehow? 
-        private void DriveOneArgument(GrammarParser.Func_exprContext context)
+        //Needs an update based on DriveTwoArguments, or be removed.
+        private string DriveOneArgument(string speed)
         {
-            int seconds = 20;
-            string speed = context.GetChild(2).GetText();
+            string stringToReturn = "";
+            int seconds = 10;
             //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            GeneratedCode += $"{prefix}self.create.drive_direct(({speed})*10, {speed}*10)";
-            GeneratedCode += $"{prefix}self.time.sleep({seconds})";
+            stringToReturn += $"{prefix}self.create.drive_direct(({speed})*10, {speed}*10)";
+            stringToReturn += $"{prefix}self.time.sleep({seconds})";
+
+            return stringToReturn;
 
         }
-        private void DriveTwoArguments(GrammarParser.Func_exprContext context)
+        private string DriveTwoArguments(string distance, string speed)
         {
-            //Needs time.sleep, but how to calculate the right amount of seconds?
-            string distance = context.GetChild(2).GetText();
-            string speed = context.GetChild(4).GetText();
-            int seconds = 20;
+
+            //Needs precise arguments for how long to drive..Simple formula?
+
+            string stringToReturn = "";
+            //Needs time.sleep, but how to calculate the right amount of seconds?            
+            int seconds = 1 * Convert.ToInt32(distance);
+            if (seconds < 5) seconds = 5;
             //Multiplied by 10 because we set it as cm/s, not mm/s. 
             //GeneratedCode += $"{prefix}self.create.drive_distance({distance}, ({speed})*10)";
-            GeneratedCode += $"{prefix}self.create.drive_direct({speed}*10, {speed}*10)";
-            GeneratedCode += $"{prefix}self.time.sleep({seconds})";
+
+            stringToReturn += $"{prefix}self.create.drive_direct({speed}*10, {speed}*10)";
+            stringToReturn += $"{prefix}self.time.sleep({seconds})";
+
+            return stringToReturn;
         }
-        private void Turn(GrammarParser.Func_exprContext context)
+        private string Turn(string degrees)
         {
-            string degrees = context.GetChild(2).GetText();
-            //Not sure what 0 means? 
-            //Should it be turn while driving? Right now it's stationary, I think.
-            GeneratedCode += $"{prefix}self.create.drive_turn({degrees},0)";
+
+            string stringToReturn = "";
+
+
+            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
+            stringToReturn += $"{prefix}self.time.sleep(2)";
+
+            return stringToReturn;
+
+           // GeneratedCode += $"{prefix}self.create.drive_turn({degrees},0)";
 
         }
         private void CoverCircle(GrammarParser.Func_exprContext context)
@@ -202,8 +216,6 @@ namespace RoombaCompiler2
         private void CoverRectangle(GrammarParser.Func_exprContext context)
         {
             /*
-            Not sure if it works?
-            Need to set up simulator
             Base idea:
             */
             //Clean one line up to h. 
@@ -215,30 +227,26 @@ namespace RoombaCompiler2
             //Drive 5 cm to the right
             //Turn -90 degrees
             //Repeat until w has been reached, somehow.
-
-            string coveredWidth = "0";
+           
             string width = context.GetChild(2).GetText();
 
             string height = context.GetChild(4).GetText();
             //Does it accept floats? We need to test this.
-            string turnDistance = "0.05";
 
-            string stringToAdd = prefix;
-            stringToAdd += $"coveredWidth = {coveredWidth}";
-            stringToAdd += $"{prefix}while coveredWidth <= {width}:";
+            string stringToAdd = "";
+            stringToAdd += $"{prefix}coveredDistance = 0";
+            stringToAdd += $"{prefix}while coveredDistance < {width}:";
             prefix += "\t";
-            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
-            stringToAdd += $"{prefix}self.drive_stop()";
-            stringToAdd += $"{prefix}self.drive_turn(90,0)";
-            //Does it need pause here?
-            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
-            stringToAdd += $"{prefix}self.drive_turn(90,0)";
-            stringToAdd += $"{prefix}self.drive_distance(({height}, 100)";
-            stringToAdd += $"{prefix}self.drive_stop()";
-            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
-            stringToAdd += $"{prefix}self.drive_distance({turnDistance}, 100)";
-            stringToAdd += $"{prefix}self.drive_turn(-90,0)";
-            stringToAdd += $"{prefix}coveredWidth += 5";
+            stringToAdd += DriveTwoArguments("20", "20");
+            stringToAdd += Turn("90");
+            stringToAdd += DriveTwoArguments("1", "1");
+            stringToAdd += Turn("90");
+            stringToAdd += DriveTwoArguments("20", "20");
+            stringToAdd += Turn("-90");
+            stringToAdd += DriveTwoArguments("1", "1");
+            stringToAdd += Turn("-90");
+            stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
+
             GeneratedCode += stringToAdd;
             prefix = RemovePrefix(prefix, "\t");
 
