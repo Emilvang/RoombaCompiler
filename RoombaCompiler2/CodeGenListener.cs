@@ -180,20 +180,24 @@ namespace RoombaCompiler2
         }
         private string DriveTwoArguments(string distance, string speed)
         {
+            
+            string stringToReturn = "";                    
+                       
+            //Get the time: I think it works.
+            string seconds = $"{distance} / ({speed}) ";
 
-            //Needs precise arguments for how long to drive..Simple formula?
 
-            string stringToReturn = "";
-            //Needs time.sleep, but how to calculate the right amount of seconds?            
-            int seconds = 1 * Convert.ToInt32(distance);
-            if (seconds < 5) seconds = 5;
-            //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            //GeneratedCode += $"{prefix}self.create.drive_distance({distance}, ({speed})*10)";
-
+            //Multiplied by 10 because we set it as cm/s, not mm/s.
+            
             stringToReturn += $"{prefix}self.create.drive_direct({speed}*10, {speed}*10)";
             stringToReturn += $"{prefix}self.time.sleep({seconds})";
 
             return stringToReturn;
+        }
+
+        private int getSeconds(int distance, int speed)
+        {
+            return Math.Abs(distance / (speed * 10));
         }
         private string Turn(string degrees)
         {
@@ -235,15 +239,15 @@ namespace RoombaCompiler2
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
-            stringToAdd += $"{prefix}while coveredDistance < {width}:";
+            stringToAdd += $"{prefix}while coveredDistance < {width}/100:";
             prefix += "\t";
-            stringToAdd += DriveTwoArguments("20", "20");
+            stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments("1", "1");
+            stringToAdd += DriveTwoArguments("5", "1");
             stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments("20", "20");
+            stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("-90");
-            stringToAdd += DriveTwoArguments("1", "1");
+            stringToAdd += DriveTwoArguments("5", "1");
             stringToAdd += Turn("-90");
             stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
 
