@@ -16,12 +16,18 @@ using Antlr4.Runtime.Misc;
  */
 
 
+    /*Issues:
+     * Turn command doesn't exist, have to find a way to do it with drive_direct    
+     * Built in functions are fucked, and I can't find where they are declared.
+     * */
+
+
 namespace RoombaCompiler2
 {
     class CodeGenListener : GrammarBaseListener
     {
         public string GeneratedCode { get; set; }
-        public string prefix = "\r\n";
+        public string prefix = "\r\n\t\t";
 
         public CodeGenListener()
         {
@@ -30,16 +36,26 @@ namespace RoombaCompiler2
 
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
-            GeneratedCode += "class Run:\r\n\tdef __init__(self,factory):\r\n\t\"\"\"Constructor.\r\n" +
-                    "Args:\r\n\tfactory (factory.FactoryCreate)\r\n\t\"\"\"\r\nself.create = factory.create_create()\r\nself.time = factory.create_time_helper()\r\n" +
-                    "def run(self):\r\n\tself.create.start()\r\n\tself.create.safe()\r\n";
+            GeneratedCode += "class Run:\r\n\t" +
+                "def __init__(self,factory):\r\n\t\t\"\"\"" +
+                "Constructor.\r\n\t\t" +
+                    "Args:\r\n\t\t\t" +
+                    "factory (factory.FactoryCreate)\r\n\t\t\"\"\"\r\n\t\t" +
+                    "self.create = factory.create_create()\r\n\t\t" +
+                    "self.servo = factory.create_servo()\r\n\t\t" +
+                    "self.time = factory.create_time_helper()\r\n\t\t" +
+                    "self.virtual_create = factory.create_virtual_create()\r\n\t" +                    
+                    "def run(self):\r\n\t\t" +
+                    "self.create.start()\r\n\t\t" +
+                    "self.create.full()\r\n\t";
             base.EnterProgram(context);
         }
+                
 
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
         {
             //Necessary? Not sure
-            GeneratedCode += prefix + "self.close()";
+            GeneratedCode += prefix + "self.create.stop()";
             base.ExitProgram(context);
         }
 
@@ -127,32 +143,56 @@ namespace RoombaCompiler2
                     Dock();
                     break;
                 default:
-                    GeneratedCode += prefix + context.GetText();
+                    DefaultFuncExprHandler(context);
+                    //GeneratedCode += prefix + context.GetText();
                     break;
             }
             base.EnterFunc_expr(context);
         }
+
+
+        private void DefaultFuncExprHandler(GrammarParser.Func_exprContext context)
+        {
+            Console.WriteLine(context.Parent.GetType());
+                       
+
+            var parentType = context.Parent.GetType();
+
+            if (parentType == typeof(GrammarParser.StmtContext))
+            {
+                GeneratedCode += prefix + context.GetText();
+
+            }
+
+        }
+
         //Not sure if time.sleep needs to be added somehow? 
         private void DriveOneArgument(GrammarParser.Func_exprContext context)
         {
+            int seconds = 20;
             string speed = context.GetChild(2).GetText();
             //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            GeneratedCode += $"{prefix}self.drive_straight(({speed})*10)";
+            GeneratedCode += $"{prefix}self.create.drive_direct(({speed})*10, {speed}*10)";
+            GeneratedCode += $"{prefix}self.time.sleep({seconds})";
 
         }
         private void DriveTwoArguments(GrammarParser.Func_exprContext context)
         {
-            string speed = context.GetChild(2).GetText();
-            string distance = context.GetChild(4).GetText();
+            //Needs time.sleep, but how to calculate the right amount of seconds?
+            string distance = context.GetChild(2).GetText();
+            string speed = context.GetChild(4).GetText();
+            int seconds = 20;
             //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            GeneratedCode += $"{prefix}self.drive_distance({distance}, ({speed})*10)";
+            //GeneratedCode += $"{prefix}self.create.drive_distance({distance}, ({speed})*10)";
+            GeneratedCode += $"{prefix}self.create.drive_direct({speed}*10, {speed}*10)";
+            GeneratedCode += $"{prefix}self.time.sleep({seconds})";
         }
         private void Turn(GrammarParser.Func_exprContext context)
         {
             string degrees = context.GetChild(2).GetText();
             //Not sure what 0 means? 
             //Should it be turn while driving? Right now it's stationary, I think.
-            GeneratedCode += $"{prefix}self.drive_turn({degrees},0)";
+            GeneratedCode += $"{prefix}self.create.drive_turn({degrees},0)";
 
         }
         private void CoverCircle(GrammarParser.Func_exprContext context)
@@ -206,11 +246,11 @@ namespace RoombaCompiler2
         private void Dock()
         {
             //Couldn't find the necessary code from pycreate2. Just a guess
-            GeneratedCode += $"{prefix}self.dock()";
+            GeneratedCode += $"{prefix}self.create.dock()";
         }
         private void Stop()
         {
-            GeneratedCode += $"{prefix}self.drive_stop()";
+            GeneratedCode += $"{prefix}self.create.drive_stop()";
         }
 
 
@@ -219,14 +259,9 @@ namespace RoombaCompiler2
         {
             //Do nothing
             base.ExitFunc_expr(context);
-        }        
+        }     
         
-
-        public override void EnterVar_expr([NotNull] GrammarParser.Var_exprContext context)
-        {
-            //GeneratedCode += $"{context.GetText()}";
-            base.EnterVar_expr(context);
-        }
+               
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
@@ -313,6 +348,8 @@ namespace RoombaCompiler2
             //prefix = RemovePrefix(prefix, "\t");
             base.ExitCond_stmt(context);
         }
+
+       
 
         public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
         {
