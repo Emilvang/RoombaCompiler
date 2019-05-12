@@ -201,7 +201,7 @@ namespace RoombaCompiler2
             string stringToReturn = "";
 
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
-            stringToReturn += $"{prefix}self.time.sleep(2)";
+            stringToReturn += $"{prefix}self.time.sleep(1.85)";
 
             return stringToReturn;
            

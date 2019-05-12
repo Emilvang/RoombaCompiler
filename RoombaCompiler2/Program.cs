@@ -62,7 +62,7 @@ namespace RoombaCompiler2
             System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
             
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }
