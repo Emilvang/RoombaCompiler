@@ -11,7 +11,7 @@ namespace RoombaCompiler2
         static void Main(string[] args)
         {
             //Adding translating tools for bools            
-            var charStream = CharStreams.fromPath("simpleProgram.txt");
+            var charStream = CharStreams.fromPath("firstProgram.txt");
 
             var lexer = new GrammarLexer(charStream);
 
