@@ -75,10 +75,10 @@ namespace RoombaCompiler2.SemanticAnalysis
         {
             if (context.ChildCount == 1)
             {
-                var valueType = context.GetChild(0).GetType();
-                var value = context.GetChild(0).GetText();
+                var child = context.GetChild(0);
+                var value = child.GetText();
 
-                if (valueType == typeof(GrammarParser.Var_exprContext))
+                if (child is GrammarParser.Var_exprContext)
                 {
                     var variableType = GetVariableTypeFromSymbolTable(value);
                     if (variableType != EValueType.Integer && variableType != EValueType.Float)
@@ -88,7 +88,7 @@ namespace RoombaCompiler2.SemanticAnalysis
 
                     return variableType;
                 }
-                else if (valueType == typeof(GrammarParser.Func_exprContext))
+                else if (child is GrammarParser.Func_exprContext)
                 {
                     return base.Visit(context.GetChild(0));
                 }
@@ -104,6 +104,10 @@ namespace RoombaCompiler2.SemanticAnalysis
                 {
                     Errors.Add($"Cannot use the value: {value} in a numerical expression");
                 }
+            }
+            else if (context.ChildCount > 1 && context.children.WithType<GrammarParser.Num_exprContext>().Count() == 1)
+            {
+                return base.Visit(context.children.WithType<GrammarParser.Num_exprContext>().First());
             }
             else
             {
@@ -130,10 +134,10 @@ namespace RoombaCompiler2.SemanticAnalysis
         {
             if (context.ChildCount == 1)
             {
-                var valueType = context.GetChild(0).GetType();
-                var value = context.GetChild(0).GetText();
+                var child = context.GetChild(0);
+                var value = child.GetText();
 
-                if (valueType == typeof(GrammarParser.Var_exprContext))
+                if (child is GrammarParser.Var_exprContext)
                 {
                     var variableType = GetVariableTypeFromSymbolTable(value);
                     if (variableType != EValueType.Boolean)
@@ -141,7 +145,7 @@ namespace RoombaCompiler2.SemanticAnalysis
                         Errors.Add($"Variable with name: {value} and type: {variableType} cannot be used in a logical expression.");
                     }
                 }
-                else if (valueType == typeof(GrammarParser.Func_exprContext))
+                else if (child is GrammarParser.Func_exprContext)
                 {
                     var methodType = base.Visit(context.GetChild(0));
                     if (methodType != EValueType.Boolean)
@@ -153,6 +157,10 @@ namespace RoombaCompiler2.SemanticAnalysis
                 {
                     Errors.Add($"Value: {value} cannot be used in a logical expression");
                 }
+            }
+            else if (context.ChildCount > 1 && context.children.WithType<GrammarParser.Logic_exprContext>().Count() == 1)
+            {
+                base.Visit(context.children.WithType<GrammarParser.Logic_exprContext>().First());
             }
             else
             {
@@ -216,11 +224,11 @@ namespace RoombaCompiler2.SemanticAnalysis
             var method = _methodsTable[methodName];
 
             // Its a hack when calling a function with no parameters
-            if (method.Parameters.Count == 0 && context.children.SingleOrDefault(x => x.GetType() == typeof(GrammarParser.ExprContext))?.GetChild(0)?.GetChild(0) == null)
+            if (method.Parameters.Count == 0 && context.children.WithType<GrammarParser.ExprContext>()?.SingleOrDefault()?.GetChild(0)?.GetChild(0) == null)
             {
                 return method.ReturnType;
             }
-            else if (method.Parameters.Count != context.children.Count(x => x.GetType() == typeof(GrammarParser.ExprContext)))
+            else if (method.Parameters.Count != context.children.WithType<GrammarParser.ExprContext>().Count())
             {
                 Errors.Add($"There is a different number of parameters when invoking the method: {methodName}");
                 return null;
@@ -228,7 +236,7 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             var index = 0;
 
-            foreach (var methodParameter in context.children.Where(x => x.GetType() == typeof(GrammarParser.ExprContext)))
+            foreach (var methodParameter in context.children.WithType<GrammarParser.ExprContext>())
             {
                 var actualMethodParameterType = base.Visit(methodParameter);
                 var declaredMethodParameterType = method.Parameters.ElementAt(index).Value; // Out of range dictionary

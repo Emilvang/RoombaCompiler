@@ -1,7 +1,7 @@
 ﻿bool t(int i, int t, int s)
 {
 
-	bool r = True AND False OR (5>10 AND True OR False)
+	bool r = (True AND False) OR (5>10 AND True OR False)
 
 	return i + t > s
 }
@@ -40,9 +40,9 @@ int r()
 	ko(5, False)
 
 	bool corect = t1(4, 4.52) AND t1(1, 4) AND True AND 4 > 1
-	float s = 5 + 5 * 1
+	float s = ((5 + (5 * 1) + 10 * ko(1,True)))
 	float s1 = 5
-	int s3 = 1
+	int s3 = (1 + t) * ((sso) * (11 + 5))
 	float ns = 5 + 4 + s3
 
 	while corect AND False AND (True OR ( s3 > s1))
