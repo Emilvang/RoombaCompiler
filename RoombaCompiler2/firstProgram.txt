@@ -60,8 +60,22 @@ int r()
 	return 1
 }
 
+void rest()
+{
+
+}
+
+void rest2(int o, int p, int q)
+{
+
+}
+
 Program 
 {
+	rest()
+
+	rest2(1,4,555)
+
 	int n = 5000
 
 	if True AND True
