@@ -34,9 +34,16 @@ namespace RoombaCompiler2
             GeneratedCode = "";
         }
 
+       // def convertToSeconds(self, degrees):
+        //return (self.constant1* 2 * degrees) + (self.constant2* 3 * degrees)
+
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             GeneratedCode += "class Run:\r\n\t" +
+                "constant1 = constant1 = 1.803 / 2 / 90\r\n\t" +
+                "constant2 = 0.033 / 3 / 90\r\n\t" +
+                "def convertToSeconds(self, degrees):\r\n\t\t" +
+                "return (self.constant1* 2 * degrees) + (self.constant2* 3 * degrees)\r\n\t" +
                 "def __init__(self,factory):\r\n\t\t\"\"\"" +
                 "Constructor.\r\n\t\t" +
                     "Args:\r\n\t\t\t" +
@@ -199,8 +206,14 @@ namespace RoombaCompiler2
 
             string stringToReturn = "";
 
+            
+            string constant = "1.803";
+            string speed = "100";
+
+            string addition = $"({degrees}/180)*0.05";
+
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
-            stringToReturn += $"{prefix}self.time.sleep(1.85)";
+            stringToReturn += $"{prefix}self.time.sleep(2+{addition})";
 
             return stringToReturn;
            
@@ -233,7 +246,7 @@ namespace RoombaCompiler2
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
-            stringToAdd += $"{prefix}while coveredDistance < {width}/100:";
+            stringToAdd += $"{prefix}while coveredDistance < {width}/100*2:";
             prefix += "\t";
             stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("90");
