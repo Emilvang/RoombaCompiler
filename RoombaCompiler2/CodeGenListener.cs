@@ -152,9 +152,8 @@ namespace RoombaCompiler2
 
 
         private void DefaultFuncExprHandler(GrammarParser.Func_exprContext context)
-        {
-            Console.WriteLine(context.Parent.GetType());
-                       
+        {           
+                      
 
             var parentType = context.Parent.GetType();
 
