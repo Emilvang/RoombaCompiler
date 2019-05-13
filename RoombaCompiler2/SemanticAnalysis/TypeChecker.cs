@@ -290,5 +290,12 @@ namespace RoombaCompiler2.SemanticAnalysis
                 Errors.Add($"Expression does not match declared type in the {action} of variable: {variableName}");
             }
         }
+        public void PrintErrors()
+        {
+            foreach(var Error in Errors)
+            {
+                Console.WriteLine(Error);
+            }
+        }
     }
 }

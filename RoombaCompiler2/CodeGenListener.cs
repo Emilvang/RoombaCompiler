@@ -39,11 +39,7 @@ namespace RoombaCompiler2
 
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
-            GeneratedCode += "class Run:\r\n\t" +
-                "constant1 = constant1 = 1.803 / 2 / 90\r\n\t" +
-                "constant2 = 0.033 / 3 / 90\r\n\t" +
-                "def convertToSeconds(self, degrees):\r\n\t\t" +
-                "return (self.constant1* 2 * degrees) + (self.constant2* 3 * degrees)\r\n\t" +
+            GeneratedCode += "class Run:\r\n\t" +               
                 "def __init__(self,factory):\r\n\t\t\"\"\"" +
                 "Constructor.\r\n\t\t" +
                     "Args:\r\n\t\t\t" +
@@ -233,8 +229,8 @@ namespace RoombaCompiler2
             stringToReturn += $"{prefix}self.time.sleep(1)";
             stringToReturn += $"{prefix}self.create.drive_direct(50, 50)";
             stringToReturn += $"{prefix}self.time.sleep(i)";
-            RemovePrefix(prefix, "\t");
-            RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix(prefix, "\t");
             GeneratedCode += stringToReturn;
 
         }
@@ -447,8 +443,8 @@ namespace RoombaCompiler2
             TranslateScope.Add("-", " - ");
             TranslateScope.Add("/", " / ");
             TranslateScope.Add("*", " * ");
-            TranslateScope.Add("AND", " AND ");
-            TranslateScope.Add("OR", " AND ");
+            TranslateScope.Add("AND", " and ");
+            TranslateScope.Add("OR", " or ");
 
             //Has to replace certain elements for the compute function to work. 
             foreach (var variable in TranslateScope)
