@@ -222,6 +222,21 @@ namespace RoombaCompiler2
         private void CoverCircle(GrammarParser.Func_exprContext context)
         {
 
+            string numberOfCircles = context.GetChild(2).GetText();
+
+            string stringToReturn = "";
+            stringToReturn += $"{prefix}for i in range({numberOfCircles}):";
+            prefix += "\t";
+            stringToReturn += $"{prefix}for j in range(10):";
+            prefix += "\t";
+            stringToReturn += $"{prefix}self.create.drive_direct(100, 200)";
+            stringToReturn += $"{prefix}self.time.sleep(1)";
+            stringToReturn += $"{prefix}self.create.drive_direct(50, 50)";
+            stringToReturn += $"{prefix}self.time.sleep(i)";
+            RemovePrefix(prefix, "\t");
+            RemovePrefix(prefix, "\t");
+            GeneratedCode += stringToReturn;
+
         }
         //Seems to work
         private void CoverRectangle(GrammarParser.Func_exprContext context)
