@@ -33,10 +33,7 @@ namespace RoombaCompiler2
         {
             GeneratedCode = "";
         }
-
-       // def convertToSeconds(self, degrees):
-        //return (self.constant1* 2 * degrees) + (self.constant2* 3 * degrees)
-
+        
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
             GeneratedCode += "class Run:\r\n\t" +               
@@ -108,7 +105,7 @@ namespace RoombaCompiler2
 
         public override void ExitFunc_stmt([NotNull] GrammarParser.Func_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
 
             base.ExitFunc_stmt(context);
         }
@@ -202,10 +199,6 @@ namespace RoombaCompiler2
 
             string stringToReturn = "";
 
-            
-            string constant = "1.803";
-            string speed = "100";
-
             string addition = $"({degrees}/180)*0.05";
 
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
@@ -229,8 +222,8 @@ namespace RoombaCompiler2
             stringToReturn += $"{prefix}self.time.sleep(1)";
             stringToReturn += $"{prefix}self.create.drive_direct(50, 50)";
             stringToReturn += $"{prefix}self.time.sleep(i)";
-            prefix = RemovePrefix(prefix, "\t");
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
+            prefix = RemovePrefix();
             GeneratedCode += stringToReturn;
 
         }
@@ -270,7 +263,7 @@ namespace RoombaCompiler2
             stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
 
             GeneratedCode += stringToAdd;
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
 
         }
         //No clue
@@ -325,7 +318,7 @@ namespace RoombaCompiler2
 
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
             base.ExitIter_stmt(context);
         }
 
@@ -394,7 +387,7 @@ namespace RoombaCompiler2
         }
         public override void ExitIf_stmt([NotNull] GrammarParser.If_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
             base.ExitIf_stmt(context);
         }
         public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
@@ -406,7 +399,7 @@ namespace RoombaCompiler2
         }
         public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
             base.ExitElseif_stmt(context);
         }
         public override void EnterElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
@@ -418,16 +411,16 @@ namespace RoombaCompiler2
         }
         public override void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
         {
-            prefix = RemovePrefix(prefix, "\t");
+            prefix = RemovePrefix();
             base.ExitElse_stmt(context);
         }
 
-        private string RemovePrefix(string sourceString, string removeString)
+        private string RemovePrefix()
         {
-            int index = sourceString.IndexOf(removeString);
+            int index = prefix.IndexOf("\t");
             string cleanPath = (index < 0)
-                ? sourceString
-                : sourceString.Remove(index, removeString.Length);
+                ? prefix
+                : prefix.Remove(index, "\t".Length);
 
             return cleanPath;
 
