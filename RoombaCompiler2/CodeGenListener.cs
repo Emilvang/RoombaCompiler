@@ -236,7 +236,7 @@ namespace RoombaCompiler2
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
-            stringToAdd += $"{prefix}while coveredDistance < {width}/100*2:";
+            stringToAdd += $"{prefix}while coveredDistance < {width}/100*4:";
             prefix += "\t";
             stringToAdd += DriveTwoArguments(height, "20");
             stringToAdd += Turn("90");
