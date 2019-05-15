@@ -180,9 +180,9 @@ namespace RoombaCompiler2
         private string DriveTwoArguments(string distance, string speed)
         {
             
-            string stringToReturn = "";                    
+            string stringToReturn = "";                  
                        
-            //Get the time: I think it works.
+            
             string seconds = $"{distance} / ({speed}) ";
 
 
@@ -229,24 +229,10 @@ namespace RoombaCompiler2
         }
         //Seems to work
         private void CoverRectangle(GrammarParser.Func_exprContext context)
-        {
-            /*
-            Base idea:
-            */
-            //Clean one line up to h. 
-            //Turn 90 degrees.
-            //Drive 5 cm to the right?
-            //Turn 90 degrees
-            //Clean one line down to h.
-            //Turn -90 degrees
-            //Drive 5 cm to the right
-            //Turn -90 degrees
-            //Repeat
-           
+        {                       
             string width = context.GetChild(2).GetText();
 
-            string height = context.GetChild(4).GetText();
-            //The small correction drives after the turns might need to be adjusted. It drives crooked for some reason..Not sure how to fix.
+            string height = context.GetChild(4).GetText();           
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
@@ -265,28 +251,17 @@ namespace RoombaCompiler2
             GeneratedCode += stringToAdd;
             prefix = RemovePrefix();
 
-        }
-        //No clue
+        }        
         private void Dock()
         {
             //Couldn't find the necessary code from pycreate2. Just a guess
             GeneratedCode += $"{prefix}self.create.dock()";
-        }
-        //Is this even necessary?
+        }        
         private void Stop()
         {
             GeneratedCode += $"{prefix}self.create.drive_direct(0,0)";
-        }
-
-
-
-        public override void ExitFunc_expr([NotNull] GrammarParser.Func_exprContext context)
-        {
-            //Do nothing
-            base.ExitFunc_expr(context);
-        }     
-        
-               
+        }         
+                       
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
@@ -316,11 +291,8 @@ namespace RoombaCompiler2
 
 
 
-        public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
-        {
-            prefix = RemovePrefix();
-            base.ExitIter_stmt(context);
-        }
+        public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => prefix = RemovePrefix();
+        
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
@@ -334,16 +306,9 @@ namespace RoombaCompiler2
 
             base.EnterVar_decl(context);
         }
-
-        public override void ExitVar_decl([NotNull] GrammarParser.Var_declContext context)
-        {
-            //Do nothing?
-            base.ExitVar_decl(context);
-        }
-
+        
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
-
             GeneratedCode += prefix + context.GetText();
             base.EnterVar_stmt(context);
         }
@@ -358,22 +323,8 @@ namespace RoombaCompiler2
             }
             GeneratedCode += prefix + "return" + returnCode;
             base.EnterReturn_stmt(context);
-        }
-        
-
-        public override void EnterCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
-        {
-            //Do nothing?      
-
-            base.EnterCond_stmt(context);
-        }
-
-        public override void ExitCond_stmt([NotNull] GrammarParser.Cond_stmtContext context)
-        {
-            //prefix = RemovePrefix(prefix, "\t");
-            base.ExitCond_stmt(context);
-        }
-
+        }       
+           
        
 
         public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
@@ -385,11 +336,8 @@ namespace RoombaCompiler2
 
             base.EnterIf_stmt(context);
         }
-        public override void ExitIf_stmt([NotNull] GrammarParser.If_stmtContext context)
-        {
-            prefix = RemovePrefix();
-            base.ExitIf_stmt(context);
-        }
+        public override void ExitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => prefix = RemovePrefix();
+        
         public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
         {
             string stringToAdd = $"elif {SearchAndReplace(context.GetChild(1).GetText())}:";
@@ -397,11 +345,8 @@ namespace RoombaCompiler2
             prefix += "\t";
             base.EnterElseif_stmt(context);
         }
-        public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
-        {
-            prefix = RemovePrefix();
-            base.ExitElseif_stmt(context);
-        }
+        public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => prefix = RemovePrefix();
+        
         public override void EnterElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
         {
             string stringToAdd = $"else:";
@@ -409,11 +354,8 @@ namespace RoombaCompiler2
             prefix += "\t";
             base.EnterElse_stmt(context);
         }
-        public override void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
-        {
-            prefix = RemovePrefix();
-            base.ExitElse_stmt(context);
-        }
+        public override void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => prefix = RemovePrefix();
+        
 
         private string RemovePrefix()
         {
