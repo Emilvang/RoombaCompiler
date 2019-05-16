@@ -196,13 +196,23 @@ namespace RoombaCompiler2
                 
         private string Turn(string degrees)
         {
-
+            
             string stringToReturn = "";
+            string addition = $"({degrees}/3000)";
 
-            string addition = $"({degrees}/180)*0.05";
 
-            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees},{degrees})";
+            stringToReturn +=  $"{prefix}if {degrees} > 0:";
+            prefix += "\t";
+            //stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +0.7 ,{degrees} -0.7)";
+            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +({degrees}/128.5) ,{degrees} -({degrees}/128.5))";
+            //stringToReturn += $"{prefix}self.create.drive_direct(-100, 100)";
+            prefix = RemovePrefix();
+            stringToReturn += $"{prefix}else:";
+            prefix += "\t";
+            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} -({degrees}/128.5) ,{degrees} +({degrees}/128.5))";
+            prefix = RemovePrefix();
             stringToReturn += $"{prefix}self.time.sleep(2+{addition})";
+
 
             return stringToReturn;
            
@@ -238,11 +248,11 @@ namespace RoombaCompiler2
             stringToAdd += $"{prefix}coveredDistance = 0";
             stringToAdd += $"{prefix}while coveredDistance < {width}/100*4:";
             prefix += "\t";
-            stringToAdd += DriveTwoArguments(height, "20");
+            stringToAdd += DriveTwoArguments(height, "50");
             stringToAdd += Turn("90");
             stringToAdd += DriveTwoArguments("5", "30");
             stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments(height, "20");
+            stringToAdd += DriveTwoArguments(height, "50");
             stringToAdd += Turn("-90");
             stringToAdd += DriveTwoArguments("5", "30");
             stringToAdd += Turn("-90");
