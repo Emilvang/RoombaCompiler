@@ -12,10 +12,13 @@ namespace RoombaCompiler2.SemanticAnalysis
         public SymbolTable SymbolTable = new SymbolTable();
         public ICollection<string> Errors = new HashSet<string>();
         public IDictionary<string, MethodRecord> DeclaredMethods = new Dictionary<string, MethodRecord>();
-
-
+        public string CurrentScope { get; set; }
+        public int ScopeCount { get; set; }
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
+            System.Console.WriteLine("Entering global scope");
+            CurrentScope = "Global scope";
+            ScopeCount = 0;
             EnterScopeAndSetType(EScopeType.Program);
             PopulateWithBuiltInFunctions();
         }
@@ -47,7 +50,8 @@ namespace RoombaCompiler2.SemanticAnalysis
             {
                 Errors.Add($"Method with name: {methodName} has already been declared.");
             }
-
+            System.Console.WriteLine("Added function " + methodName + " to " + CurrentScope);
+            
             EnterScopeAndSetType($"{EScopeType.Method} [{methodType}] [{methodName}]");
         }
 
@@ -58,23 +62,51 @@ namespace RoombaCompiler2.SemanticAnalysis
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
+            System.Console.WriteLine("-------------------------------------------");
             EnterScopeAndSetType(EScopeType.Loop);
-
+            ScopeCount++;
+            string ScopeC;
+            if (ScopeCount == 1)
+            {
+                ScopeC = "1";
+                CurrentScope = "Local scope " + ScopeC;
+                System.Console.WriteLine("Entering " + CurrentScope);
+            }
+            else
+            {
+                ScopeC = "1.1";
+                CurrentScope = "Local scope " + ScopeC;
+                System.Console.WriteLine("Entering " + CurrentScope);
+            }
             if (context.FOR() != null)
             {
                 var variableName = context.IDENTIFIER().GetText();
-
+                System.Console.WriteLine("Added variable " + variableName + " to " + CurrentScope);
                 TryAddVariableToSymbolTable(variableName, EValueType.Integer);
             }
         }
 
-        public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => SymbolTable.ExitScope();
+        public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
+        {
+            SymbolTable.ExitScope();
+            ScopeCount--;
+            System.Console.WriteLine("Exiting " + CurrentScope);
+            System.Console.WriteLine("-------------------------------------------");
+            if (ScopeCount == 1)
+            {
+                CurrentScope = "Local scope 1";
+            }
+            else
+            {
+                CurrentScope = "Global scope";
+            }
+        }
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
             var variableName = context.GetChild(1).ToStringTree();
             var variableType = context.GetChild(0).ToStringTree();
-
+            System.Console.WriteLine("Added " + variableName + " to " + CurrentScope);
             TryAddVariableToSymbolTable(variableName, variableType.GetVariableType());
         }
  
