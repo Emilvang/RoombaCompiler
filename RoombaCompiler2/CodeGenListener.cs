@@ -137,7 +137,7 @@ namespace RoombaCompiler2
                     CoverRectangle(context);
                     break;
                 case "Stop":
-                    Stop();
+                    GeneratedCode += Stop();
                     break;
                 case "Dock":
                     Dock();
@@ -196,22 +196,36 @@ namespace RoombaCompiler2
                 
         private string Turn(string degrees)
         {
-            
             string stringToReturn = "";
-            string addition = $"({degrees}/3000)";
+            /*
+            stringToReturn = $"{prefix}addition = 0.0";
+            
+            stringToReturn += $"{prefix}if {degrees} > 135:";
+            prefix += "\t";
+            stringToReturn += $"addition = {degrees}/2750";
+            prefix = RemovePrefix();
+            stringToReturn += $"{prefix}else:";
+            prefix += "\t";                       
+            stringToReturn += $"{prefix}addition = ({degrees}/5000)";
+            prefix = RemovePrefix();
+            */
+            string addition = $"{ degrees}/ 2750";
 
 
             stringToReturn +=  $"{prefix}if {degrees} > 0:";
             prefix += "\t";
-            //stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +0.7 ,{degrees} -0.7)";
-            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +({degrees}/128.5) ,{degrees} -({degrees}/128.5))";
+            ////stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +0.7 ,{degrees} -0.7)";
+            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + ({degrees}/128.5) ,{degrees} - 2 - ({degrees}/128.5))";
             //stringToReturn += $"{prefix}self.create.drive_direct(-100, 100)";
+            //stringToReturn += $"{prefix}self.create.drive_direct(-{degrees}, {degrees})";
             prefix = RemovePrefix();
             stringToReturn += $"{prefix}else:";
             prefix += "\t";
-            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} -({degrees}/128.5) ,{degrees} +({degrees}/128.5))";
+            stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + 2 -({degrees}/128.5) ,{degrees} +({degrees}/128.5))";
+            //stringToReturn += $"{prefix}self.create.drive_direct(100, -100)";
+            //stringToReturn += $"{prefix}self.create.drive_direct({degrees}, -{degrees})";
             prefix = RemovePrefix();
-            stringToReturn += $"{prefix}self.time.sleep(2+{addition})";
+            stringToReturn += $"{prefix}self.time.sleep(1.98+{addition})";
 
 
             return stringToReturn;
@@ -246,16 +260,16 @@ namespace RoombaCompiler2
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
-            stringToAdd += $"{prefix}while coveredDistance < {width}/100*4:";
+            stringToAdd += $"{prefix}while coveredDistance < ({width}/100*2):";
             prefix += "\t";
             stringToAdd += DriveTwoArguments(height, "50");
-            stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments("5", "30");
-            stringToAdd += Turn("90");
-            stringToAdd += DriveTwoArguments(height, "50");
-            stringToAdd += Turn("-90");
-            stringToAdd += DriveTwoArguments("5", "30");
-            stringToAdd += Turn("-90");
+            stringToAdd += Turn("90");            
+            stringToAdd += DriveTwoArguments("20", "50");            
+            stringToAdd += Turn("90");            
+            stringToAdd += DriveTwoArguments(height, "50");            
+            stringToAdd += Turn("-90");            
+            stringToAdd += DriveTwoArguments("20", "50");
+            stringToAdd += Turn("-90");            
             stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
 
             GeneratedCode += stringToAdd;
@@ -267,9 +281,9 @@ namespace RoombaCompiler2
             //Couldn't find the necessary code from pycreate2. Just a guess
             GeneratedCode += $"{prefix}self.create.dock()";
         }        
-        private void Stop()
+        private string Stop()
         {
-            GeneratedCode += $"{prefix}self.create.drive_direct(0,0)";
+            return $"{prefix}self.create.drive_direct(0,0)";
         }         
                        
 

@@ -49,7 +49,7 @@ namespace RoombaCompiler2
             var codeGen = new CodeGenListener();
             ParseTreeWalker.Walk(codeGen, tree);
             //Added local path here for easier testing
-            System.IO.File.WriteAllText(@"C:\Users\Emil\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
+            System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
             
             //Console.ReadLine();
