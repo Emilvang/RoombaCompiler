@@ -66,16 +66,16 @@ namespace RoombaCompiler2
 
             base.EnterFunc_stmt(context);
         }
+                
 
-        //Probably needs an update with added parameter to the grammar.
+        
         private void CreateDefaultFunction(GrammarParser.Func_stmtContext context)
         {
             GeneratedCode += prefix + "def " + context.GetChild(1) + "(";
             prefix += "\t";
+           
             //3 because here the arguments begin.
-            int count2 = 3;
-            //Probably needs an escape or exception thrown somehow if the programmer makes an error. What happens if the programmer forgets a comma?
-            //Cant handle no arguments.
+            int count2 = 3;            
             while (true)
             {
                 try
@@ -152,7 +152,7 @@ namespace RoombaCompiler2
 
 
         private void DefaultFuncExprHandler(GrammarParser.Func_exprContext context)
-        {           
+        {         
                       
 
             var parentType = context.Parent.GetType();
@@ -181,10 +181,7 @@ namespace RoombaCompiler2
         {
             
             string stringToReturn = "";                  
-                       
-            
             string seconds = $"{distance} / ({speed}) ";
-
 
             //Multiplied by 10 because we set it as cm/s, not mm/s.
             
@@ -196,34 +193,20 @@ namespace RoombaCompiler2
                 
         private string Turn(string degrees)
         {
-            string stringToReturn = "";
-            /*
-            stringToReturn = $"{prefix}addition = 0.0";
-            
-            stringToReturn += $"{prefix}if {degrees} > 135:";
-            prefix += "\t";
-            stringToReturn += $"addition = {degrees}/2750";
-            prefix = RemovePrefix();
-            stringToReturn += $"{prefix}else:";
-            prefix += "\t";                       
-            stringToReturn += $"{prefix}addition = ({degrees}/5000)";
-            prefix = RemovePrefix();
-            */
+            string stringToReturn = "";           
             string addition = $"{ degrees}/ 2750";
 
 
             stringToReturn +=  $"{prefix}if {degrees} > 0:";
             prefix += "\t";
-            ////stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} +0.7 ,{degrees} -0.7)";
+            
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + ({degrees}/128.5) ,{degrees} - 2 - ({degrees}/128.5))";
-            //stringToReturn += $"{prefix}self.create.drive_direct(-100, 100)";
-            //stringToReturn += $"{prefix}self.create.drive_direct(-{degrees}, {degrees})";
+            
             prefix = RemovePrefix();
             stringToReturn += $"{prefix}else:";
             prefix += "\t";
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + 2 -({degrees}/128.5) ,{degrees} +({degrees}/128.5))";
-            //stringToReturn += $"{prefix}self.create.drive_direct(100, -100)";
-            //stringToReturn += $"{prefix}self.create.drive_direct({degrees}, -{degrees})";
+            
             prefix = RemovePrefix();
             stringToReturn += $"{prefix}self.time.sleep(1.98+{addition})";
 
