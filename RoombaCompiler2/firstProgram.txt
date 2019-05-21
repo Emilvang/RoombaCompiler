@@ -1,97 +1,48 @@
-﻿bool t(int i, int t, int s)
+﻿void LetterR() 
 {
-
-	bool r = (True AND False) OR (5>10 AND True OR False)
-
-	return i + t > s
-}
-
-bool t3(int i)
-{
-	return True
-}
-
-bool t1(int s, float i)
-{
-	return True
-}
-
-int kop()
-{
-	return 5
-}
-
-int ko(int ro, bool k)
-{
-	if 5.01 + 5 > ro
+	Drive(200,100)
+	for i = 0 to 3
 	{
-		k = False
+		Turn(90)
+		Drive(50,100)
 	}
-
-	return ro/ro + ro + kop()
+	Turn(210)
+	Drive(150,100)
 }
 
-
-int r()
+void LetterO()
 {
-	int t = kop() / 5 + 10 + kop()
-	int sso = ko(t, False)
-
-	ko(5, False)
-
-	bool corect = t1(4, 4.52) AND t1(1, 4) AND True AND 4 > 1
-	float s = ((5 + (5 * 1) + 10 * ko(1,True)))
-	float s1 = 5
-	int s3 = (1 + t) * ((sso) * (11 + 5))
-	float ns = 5 + 4 + s3
-
-	while corect AND False AND (True OR ( s3 > s1))
+	for i = 0 to 4 
 	{
-	
+		Drive(100, 100)
+		Turn(90)
 	}
-
-	for i = 0 to 5
-	{
-	    int j = 10000
-		i = 10 + kop()
-		j = j + i
-	}
-
-	return 1
-}
-
-void rest()
-{
-
-}
-
-void rest2(int o, int p, int q)
-{
-
 }
 
 Program 
 {
-	rest()
 
-	rest2(1,4,555)
+int GlobalVariable1 = 5
 
-	int n = 5000
+if GlobalVariable1 == 1
+{
+LetterR()
+}
+elseif GlobalVariable1 == 2
+{
+LetterO()
+}
+elseif GlobalVariable1 == 3
+{
+CoverRectangle(100,100)
+}
+elseif GlobalVariable1 == 4
+{
+CoverCircle(5)
+}
+else
+{
+Dock()
+}
 
-	if True AND True
-	{
-		bool r = True
-	}
-	elseif False
-	{
-		bool r = False
-	}
-	else 
-	{
-		bool r = True
-	}
-
-	int r = 8
-
-	int s = n + 3 + r
 }
