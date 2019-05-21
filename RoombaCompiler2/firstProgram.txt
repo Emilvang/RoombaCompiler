@@ -19,6 +19,11 @@ void LetterO()
 	}
 }
 
+void OnErRor()
+{
+	Dock()
+}
+
 Program 
 {
 

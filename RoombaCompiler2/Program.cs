@@ -3,6 +3,7 @@ using Antlr4.Runtime.Tree;
 using RoombaCompiler2.SemanticAnalysis;
 using RoombaCompiler2.SemanticAnalysis.Utils;
 using System;
+using System.Linq;
 
 namespace RoombaCompiler2
 {
@@ -34,7 +35,7 @@ namespace RoombaCompiler2
             Console.WriteLine("Printing scope errors:");
             sl.PrintErrors();
             sl.SymbolTable.ResetTable();
-            
+
 
 
             var typeChecker = new TypeChecker(sl.SymbolTable, sl.DeclaredMethods.ToReadOnlyDictionary());
@@ -42,16 +43,20 @@ namespace RoombaCompiler2
             typeChecker.Visit(tree);
             Console.WriteLine("Printing type errors:");
             typeChecker.PrintErrors();
-            
-            
-            
 
-            var codeGen = new CodeGenListener();
+            var onErrorMethodExactName = sl.DeclaredMethods.FirstOrDefault(x =>
+                x.Key.Equals("onerror", StringComparison.InvariantCultureIgnoreCase) &&
+                x.Value.ReturnType == SemanticAnalysis.Models.EValueType.Void &&
+                !x.Value.Parameters.Any()).Key;
+
+            var codeGen = new CodeGenListener(onErrorMethodExactName);
             ParseTreeWalker.Walk(codeGen, tree);
+
             //Added local path here for easier testing
+            System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
             System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
             Console.WriteLine(codeGen.GeneratedCode);
-            
+
             //Console.ReadLine();
         }
     }

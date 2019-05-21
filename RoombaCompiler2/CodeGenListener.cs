@@ -16,10 +16,10 @@ using Antlr4.Runtime.Misc;
  */
 
 
-    /*Issues:
-     * Turn command doesn't exist, have to find a way to do it with drive_direct    
-     * Built in functions are fucked, and I can't find where they are declared.
-     * */
+/*Issues:
+ * Turn command doesn't exist, have to find a way to do it with drive_direct    
+ * Built in functions are fucked, and I can't find where they are declared.
+ * */
 
 
 namespace RoombaCompiler2
@@ -28,15 +28,24 @@ namespace RoombaCompiler2
     {
         public string GeneratedCode { get; set; }
         public string prefix = "\r\n\t\t";
+        private readonly bool _hasOnErrorMethod;
+        private readonly string _onErrorMethodExactName;
 
-        public CodeGenListener()
+        public CodeGenListener(string onErrorMethodExactName)
         {
             GeneratedCode = "";
+
+            _onErrorMethodExactName = onErrorMethodExactName;
+            _hasOnErrorMethod = !string.IsNullOrWhiteSpace(onErrorMethodExactName);
+            if (_hasOnErrorMethod)
+            {
+                prefix += '\t';
+            }
         }
-        
+
         public override void EnterProgram([NotNull] GrammarParser.ProgramContext context)
         {
-            GeneratedCode += "class Run:\r\n\t" +               
+            GeneratedCode += "class Run:\r\n\t" +
                 "def __init__(self,factory):\r\n\t\t\"\"\"" +
                 "Constructor.\r\n\t\t" +
                     "Args:\r\n\t\t\t" +
@@ -44,18 +53,25 @@ namespace RoombaCompiler2
                     "self.create = factory.create_create()\r\n\t\t" +
                     "self.servo = factory.create_servo()\r\n\t\t" +
                     "self.time = factory.create_time_helper()\r\n\t\t" +
-                    "self.virtual_create = factory.create_virtual_create()\r\n\t" +                    
+                    "self.virtual_create = factory.create_virtual_create()\r\n\t" +
                     "def run(self):\r\n\t\t" +
-                    "self.create.start()\r\n\t\t" +
-                    "self.create.full()\r\n\t";
+                    (_hasOnErrorMethod ? $"try:{prefix}" : string.Empty) +
+                    $"self.create.start(){prefix}" +
+                    $"self.create.full(){prefix}";
             base.EnterProgram(context);
         }
-                
 
         public override void ExitProgram([NotNull] GrammarParser.ProgramContext context)
         {
             //Necessary? Not sure
             GeneratedCode += prefix + "self.create.stop()";
+
+            if (_hasOnErrorMethod)
+            {
+                GeneratedCode += "\r\n\t\t" + "except:";
+                GeneratedCode += prefix + _onErrorMethodExactName + "()";
+            }
+
             base.ExitProgram(context);
         }
 
@@ -66,16 +82,16 @@ namespace RoombaCompiler2
 
             base.EnterFunc_stmt(context);
         }
-                
 
-        
+
+
         private void CreateDefaultFunction(GrammarParser.Func_stmtContext context)
         {
             GeneratedCode += prefix + "def " + context.GetChild(1) + "(";
             prefix += "\t";
-           
+
             //3 because here the arguments begin.
-            int count2 = 3;            
+            int count2 = 3;
             while (true)
             {
                 try
@@ -152,8 +168,8 @@ namespace RoombaCompiler2
 
 
         private void DefaultFuncExprHandler(GrammarParser.Func_exprContext context)
-        {         
-                      
+        {
+
 
             var parentType = context.Parent.GetType();
 
@@ -179,40 +195,40 @@ namespace RoombaCompiler2
         }
         private string DriveTwoArguments(string distance, string speed)
         {
-            
-            string stringToReturn = "";                  
+
+            string stringToReturn = "";
             string seconds = $"{distance} / ({speed}) ";
 
             //Multiplied by 10 because we set it as cm/s, not mm/s.
-            
+
             stringToReturn += $"{prefix}self.create.drive_direct({speed}*10, {speed}*10)";
             stringToReturn += $"{prefix}self.time.sleep({seconds})";
 
             return stringToReturn;
         }
-                
+
         private string Turn(string degrees)
         {
-            string stringToReturn = "";           
+            string stringToReturn = "";
             string addition = $"{ degrees}/ 2750";
 
 
-            stringToReturn +=  $"{prefix}if {degrees} > 0:";
+            stringToReturn += $"{prefix}if {degrees} > 0:";
             prefix += "\t";
-            
+
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + ({degrees}/128.5) ,{degrees} - 2 - ({degrees}/128.5))";
-            
+
             prefix = RemovePrefix();
             stringToReturn += $"{prefix}else:";
             prefix += "\t";
             stringToReturn += $"{prefix}self.create.drive_direct(-{degrees} + 2 -({degrees}/128.5) ,{degrees} +({degrees}/128.5))";
-            
+
             prefix = RemovePrefix();
             stringToReturn += $"{prefix}self.time.sleep(1.98+{addition})";
 
 
             return stringToReturn;
-           
+
 
         }
         private void CoverCircle(GrammarParser.Func_exprContext context)
@@ -236,39 +252,39 @@ namespace RoombaCompiler2
         }
         //Seems to work
         private void CoverRectangle(GrammarParser.Func_exprContext context)
-        {                       
+        {
             string width = context.GetChild(2).GetText();
 
-            string height = context.GetChild(4).GetText();           
+            string height = context.GetChild(4).GetText();
 
             string stringToAdd = "";
             stringToAdd += $"{prefix}coveredDistance = 0";
             stringToAdd += $"{prefix}while coveredDistance < ({width}/100*2):";
             prefix += "\t";
             stringToAdd += DriveTwoArguments(height, "50");
-            stringToAdd += Turn("90");            
-            stringToAdd += DriveTwoArguments("20", "50");            
-            stringToAdd += Turn("90");            
-            stringToAdd += DriveTwoArguments(height, "50");            
-            stringToAdd += Turn("-90");            
+            stringToAdd += Turn("90");
             stringToAdd += DriveTwoArguments("20", "50");
-            stringToAdd += Turn("-90");            
+            stringToAdd += Turn("90");
+            stringToAdd += DriveTwoArguments(height, "50");
+            stringToAdd += Turn("-90");
+            stringToAdd += DriveTwoArguments("20", "50");
+            stringToAdd += Turn("-90");
             stringToAdd += $"{prefix}coveredDistance = coveredDistance + 1";
 
             GeneratedCode += stringToAdd;
             prefix = RemovePrefix();
 
-        }        
+        }
         private void Dock()
         {
             //Couldn't find the necessary code from pycreate2. Just a guess
             GeneratedCode += $"{prefix}self.create.dock()";
-        }        
+        }
         private string Stop()
         {
             return $"{prefix}self.create.drive_direct(0,0)";
-        }         
-                       
+        }
+
 
         public override void EnterIter_stmt([NotNull] GrammarParser.Iter_stmtContext context)
         {
@@ -299,21 +315,21 @@ namespace RoombaCompiler2
 
 
         public override void ExitIter_stmt([NotNull] GrammarParser.Iter_stmtContext context) => prefix = RemovePrefix();
-        
+
 
         public override void EnterVar_decl([NotNull] GrammarParser.Var_declContext context)
         {
-            
+
             string variableName = context.GetChild(1).GetText();
-            string expression = context.GetChild(3).GetText();                       
-            
-            
+            string expression = context.GetChild(3).GetText();
+
+
             string stringToAdd = $"{variableName} = {SearchAndReplace(expression)}";
             GeneratedCode += prefix + stringToAdd;
 
             base.EnterVar_decl(context);
         }
-        
+
         public override void EnterVar_stmt([NotNull] GrammarParser.Var_stmtContext context)
         {
             GeneratedCode += prefix + context.GetText();
@@ -330,9 +346,9 @@ namespace RoombaCompiler2
             }
             GeneratedCode += prefix + "return" + returnCode;
             base.EnterReturn_stmt(context);
-        }       
-           
-       
+        }
+
+
 
         public override void EnterIf_stmt([NotNull] GrammarParser.If_stmtContext context)
         {
@@ -344,7 +360,7 @@ namespace RoombaCompiler2
             base.EnterIf_stmt(context);
         }
         public override void ExitIf_stmt([NotNull] GrammarParser.If_stmtContext context) => prefix = RemovePrefix();
-        
+
         public override void EnterElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context)
         {
             string stringToAdd = $"elif {SearchAndReplace(context.GetChild(1).GetText())}:";
@@ -353,7 +369,7 @@ namespace RoombaCompiler2
             base.EnterElseif_stmt(context);
         }
         public override void ExitElseif_stmt([NotNull] GrammarParser.Elseif_stmtContext context) => prefix = RemovePrefix();
-        
+
         public override void EnterElse_stmt([NotNull] GrammarParser.Else_stmtContext context)
         {
             string stringToAdd = $"else:";
@@ -362,7 +378,7 @@ namespace RoombaCompiler2
             base.EnterElse_stmt(context);
         }
         public override void ExitElse_stmt([NotNull] GrammarParser.Else_stmtContext context) => prefix = RemovePrefix();
-        
+
 
         private string RemovePrefix()
         {
