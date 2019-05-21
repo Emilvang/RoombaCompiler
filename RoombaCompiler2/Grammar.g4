@@ -71,7 +71,6 @@ grammar Grammar;
  
  var_expr
     	: IDENTIFIER
-    	| IDENTIFIER '[' expr ']'
     	;
  
  num_expr
@@ -101,8 +100,6 @@ grammar Grammar;
 
   var_stmt
    	:  IDENTIFIER '=' (expr | logic_expr)
-   	|  IDENTIFIER '[' expr ']' '=' (expr | logic_expr)
-	|  IDENTIFIER ADDARRAY (expr | logic_expr)
    	;
 
  return_stmt
