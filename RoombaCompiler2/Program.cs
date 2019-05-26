@@ -12,7 +12,7 @@ namespace RoombaCompiler2
         static void Main(string[] args)
         {
             //Adding translating tools for bools            
-            var charStream = CharStreams.fromPath("firstProgram.txt");
+            var charStream = CharStreams.fromPath("simpleProgram.txt");
 
             var lexer = new GrammarLexer(charStream);
 
@@ -52,12 +52,17 @@ namespace RoombaCompiler2
             var codeGen = new CodeGenListener(onErrorMethodExactName);
             ParseTreeWalker.Walk(codeGen, tree);
 
-            //Added local path here for easier testing
-            System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
-            System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
-            Console.WriteLine(codeGen.GeneratedCode);
 
-            //Console.ReadLine();
+            //Maybe add an if statement that if there were errors, then don't run code gen.
+                //Added local path here for easier testing
+                System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
+                System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
+                Console.WriteLine(codeGen.GeneratedCode);
+            
+           
+            
+
+            Console.ReadLine();
         }
     }
 }

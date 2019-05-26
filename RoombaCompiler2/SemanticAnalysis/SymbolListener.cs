@@ -237,6 +237,13 @@ namespace RoombaCompiler2.SemanticAnalysis
             var driveRecord = new MethodRecord("Drive", EValueType.Void, driveDictionary);
             DeclaredMethods.Add("Drive", driveRecord);
 
+            //DriveDirect
+            var driveDirectDictionary = new Dictionary<string, EValueType>();
+            driveDirectDictionary.Add("LeftWheelSpeed", EValueType.Integer);
+            driveDirectDictionary.Add("RightWheelSpeed", EValueType.Integer);
+            var driveDirectRecord = new MethodRecord("DriveDirect", EValueType.Void, driveDictionary);
+            DeclaredMethods.Add("DriveDirect", driveDirectRecord);
+
             //CoverCircle
             var coverCircleDictionary = new Dictionary<string, EValueType>();
             coverCircleDictionary.Add("Radius", EValueType.Integer);

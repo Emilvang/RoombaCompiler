@@ -131,17 +131,14 @@ namespace RoombaCompiler2
             switch (context.GetChild(0).GetText())
             {
 
-                case "Drive":
-                    //4 = One argument for Drive.
-                    if (context.ChildCount == 4)
-                    {
-                        GeneratedCode += DriveOneArgument(context.GetChild(4).GetText());
-                    }
-                    //else: two arguments for Drive
-                    else
-                    {
-                        GeneratedCode += DriveTwoArguments(context.GetChild(2).GetText(), context.GetChild(4).GetText());
-                    }
+                case "Drive":                   
+                     GeneratedCode += DriveTwoArguments(context.GetChild(2).GetText(), context.GetChild(4).GetText());                    
+                    break;
+                case "DriveStraight":
+                    GeneratedCode += DriveOneArgument(context.GetChild(2).GetText());
+                    break;
+                case "DriveDirect":
+                    GeneratedCode += DriveDirect(context.GetChild(2).GetText(), context.GetChild(4).GetText());
                     break;
                 case "Turn":
                     GeneratedCode += Turn(context.GetChild(2).GetText());
@@ -174,6 +171,10 @@ namespace RoombaCompiler2
             GeneratedCode += $"{prefix}self.time.sleep({seconds})";
         }
 
+        private string DriveDirect(string leftWheelSpeed, string rightWheelSpeed)
+        {
+            return $"{prefix}self.create.drive_direct(({leftWheelSpeed})*10, ({rightWheelSpeed}*10))";
+        }
 
         private void DefaultFuncExprHandler(GrammarParser.Func_exprContext context)
         {
@@ -191,14 +192,9 @@ namespace RoombaCompiler2
 
         //Needs an update based on DriveTwoArguments, or be removed.
         private string DriveOneArgument(string speed)
-        {
-            string stringToReturn = "";
-            int seconds = 10;
+        {            
             //Multiplied by 10 because we set it as cm/s, not mm/s. 
-            stringToReturn += $"{prefix}self.create.drive_direct(({speed})*10, {speed}*10)";
-            stringToReturn += $"{prefix}self.time.sleep({seconds})";
-
-            return stringToReturn;
+            return $"{prefix}self.create.drive_direct(({speed})*10, ({speed}*10))";         
 
         }
         private string DriveTwoArguments(string distance, string speed)
