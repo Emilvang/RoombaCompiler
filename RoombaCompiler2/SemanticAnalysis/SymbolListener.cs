@@ -220,7 +220,7 @@ namespace RoombaCompiler2.SemanticAnalysis
 
             //Pause
             var pauseDictionary = new Dictionary<string, EValueType>();
-            pauseDictionary.Add("MilliSeconds", EValueType.Integer);
+            pauseDictionary.Add("Seconds", EValueType.Float);
             var pauseRecord = new MethodRecord("Pause", EValueType.Void, pauseDictionary);
             DeclaredMethods.Add("Pause", pauseRecord);
 

@@ -39,7 +39,7 @@ namespace RoombaCompiler2
             _hasOnErrorMethod = !string.IsNullOrWhiteSpace(onErrorMethodExactName);
             if (_hasOnErrorMethod)
             {
-                prefix += '\t';
+                prefix += "\t";
             }
         }
 
@@ -146,6 +146,9 @@ namespace RoombaCompiler2
                 case "Turn":
                     GeneratedCode += Turn(context.GetChild(2).GetText());
                     break;
+                case "Pause":
+                    Pause(context.GetChild(2).GetText());
+                    break;
                 case "CoverCircle":
                     CoverCircle(context);
                     break;
@@ -164,6 +167,11 @@ namespace RoombaCompiler2
                     break;
             }
             base.EnterFunc_expr(context);
+        }
+
+        private void Pause(string seconds)
+        {
+            GeneratedCode += $"{prefix}self.time.sleep({seconds})";
         }
 
 

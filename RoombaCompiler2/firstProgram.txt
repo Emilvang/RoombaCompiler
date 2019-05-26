@@ -19,10 +19,12 @@ void LetterO()
 	}
 }
 
-void OnErRor()
+void OnError() 
 {
-	Dock()
+Stop()
 }
+
+
 
 Program 
 {
