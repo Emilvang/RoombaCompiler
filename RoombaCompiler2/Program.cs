@@ -62,8 +62,7 @@ namespace RoombaCompiler2
 
             var codeGen = new CodeGenListener(onErrorMethodExactName);
             ParseTreeWalker.Walk(codeGen, tree);
-
-            //Maybe add an if statement that if there were errors, then don't run code gen.
+            
             //Added local path here for easier testing
             System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
             //System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);

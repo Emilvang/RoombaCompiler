@@ -29,7 +29,9 @@ Stop()
 Program 
 {
 
-int GlobalVariable1 = 5
+Turn(90)
+
+int GlobalVariable1 = 4
 
 if GlobalVariable1 == 1
 {
