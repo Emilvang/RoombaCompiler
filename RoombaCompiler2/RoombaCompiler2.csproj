@@ -48,19 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeGenListener.cs" />
-    <Compile Include="GrammarBaseListener.cs" />
-    <Compile Include="GrammarBaseVisitor.cs" />
-    <Compile Include="GrammarLexer.cs" />
-    <Compile Include="GrammarListener.cs" />
-    <Compile Include="GrammarParser.cs" />
-    <Compile Include="GrammarVisitor.cs" />
-    <Compile Include="MainScopeClass.cs" />
-    <Compile Include="PrintVisitor.cs" />
+    <Compile Include="CodeGeneration\CodeGenListener.cs" />
+    <Compile Include="ANTLR\GrammarBaseListener.cs" />
+    <Compile Include="ANTLR\GrammarBaseVisitor.cs" />
+    <Compile Include="ANTLR\GrammarLexer.cs" />
+    <Compile Include="ANTLR\GrammarListener.cs" />
+    <Compile Include="ANTLR\GrammarParser.cs" />
+    <Compile Include="ANTLR\GrammarVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScopeListener.cs" />
-    <Compile Include="ScopeNode.cs" />
     <Compile Include="SemanticAnalysis\Models\EValueType.cs" />
     <Compile Include="SemanticAnalysis\Models\MethodRecord.cs" />
     <Compile Include="SemanticAnalysis\Models\VariableRecord.cs" />
@@ -69,14 +65,16 @@
     <Compile Include="SemanticAnalysis\SymbolTable.cs" />
     <Compile Include="SemanticAnalysis\TypeChecker.cs" />
     <Compile Include="SemanticAnalysis\Utils\CommonExtensions.cs" />
-    <Compile Include="TypeListenerEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Grammar.g4" />
+    <None Include="ANTLR\Grammar.g4" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="simpleProgram.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="firstProgram.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

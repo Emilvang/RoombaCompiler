@@ -1,0 +1,55 @@
+﻿void LetterR() 
+{
+	Drive(200,100)
+	for i = 0 to 3
+	{
+		Turn(90)
+		Drive(50,100)
+	}
+	Turn(210)
+	Drive(150,100)
+}
+
+void LetterO()
+{
+	for i = 0 to 4 
+	{
+		Drive(100, 100)
+		Turn(90)
+	}
+}
+
+void OnError() 
+{
+Stop()
+}
+
+
+
+Program 
+{
+
+int GlobalVariable1 = 5
+
+if GlobalVariable1 == 1
+{
+LetterR()
+}
+elseif GlobalVariable1 == 2
+{
+LetterO()
+}
+elseif GlobalVariable1 == 3
+{
+CoverRectangle(100,100)
+}
+elseif GlobalVariable1 == 4
+{
+CoverCircle(5)
+}
+else
+{
+Dock()
+}
+
+}

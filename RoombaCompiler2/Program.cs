@@ -27,22 +27,33 @@ namespace RoombaCompiler2
 
             var sl = new SymbolListener();
 
-            var listener = new ScopeListener();
-
             var ParseTreeWalker = new ParseTreeWalker();
 
             ParseTreeWalker.Walk(sl, tree);
-            Console.WriteLine("Printing scope errors:");
-            sl.PrintErrors();
+
+            if (sl.Errors.Any())
+            {
+                Console.WriteLine("Compilation has been stoped due to errors in the scope checking phaes");
+                Console.WriteLine("Printing scope errors:");
+                sl.PrintErrors();
+                Console.ReadLine();
+                return;
+            }
+
             sl.SymbolTable.ResetTable();
-
-
 
             var typeChecker = new TypeChecker(sl.SymbolTable, sl.DeclaredMethods.ToReadOnlyDictionary());
 
             typeChecker.Visit(tree);
-            Console.WriteLine("Printing type errors:");
-            typeChecker.PrintErrors();
+
+            if (typeChecker.Errors.Any())
+            {
+                Console.WriteLine("Compilation has been stoped due to errors in the scope checking phaes");
+                Console.WriteLine("Printing type errors:");
+                typeChecker.PrintErrors();
+                Console.ReadLine();
+                return;
+            }
 
             var onErrorMethodExactName = sl.DeclaredMethods.FirstOrDefault(x =>
                 x.Key.Equals("onerror", StringComparison.InvariantCultureIgnoreCase) &&
@@ -52,16 +63,12 @@ namespace RoombaCompiler2
             var codeGen = new CodeGenListener(onErrorMethodExactName);
             ParseTreeWalker.Walk(codeGen, tree);
 
-
             //Maybe add an if statement that if there were errors, then don't run code gen.
-                //Added local path here for easier testing
-                System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
-                System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
-                Console.WriteLine(codeGen.GeneratedCode);
-            
-           
-            
-
+            //Added local path here for easier testing
+            System.IO.File.WriteAllText(@"pythonScript.py", codeGen.GeneratedCode);
+            //System.IO.File.WriteAllText(@"C:\Users\grave\pyCreate2-master\pythonScript.py", codeGen.GeneratedCode);
+            Console.WriteLine("Compilation finished successfully");
+            Console.WriteLine(codeGen.GeneratedCode);
             Console.ReadLine();
         }
     }
